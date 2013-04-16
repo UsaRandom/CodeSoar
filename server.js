@@ -24,7 +24,9 @@ server.listen(PORT, IPADDRESS);
 
 // socket.io augments our existing HTTP server instance.
 io = require('socket.io').listen(server);
-
+io.configure(function(){
+    io.set("transports", ["websocket"]);
+});
 //entries typescript for annoyingly confusing javascript syntax
 var User = (function () {
     function User(roomToJoin, nickToUse) {
