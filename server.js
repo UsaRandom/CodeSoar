@@ -1,164 +1,120 @@
 #!/bin/env node
-//  OpenShift sample Node application
+var PORT = process.env.OPENSHIFT_INTERNAL_PORT || 8080;
+var IPADDRESS = process.env.OPENSHIFT_INTERNAL_IP || '127.0.0.1';
+
 var express = require('express');
-var fs      = require('fs');
+var server;
+var io;
+var app;
+
+// Setup a very simple express application.
+app = express();
+// The root path should serve the client HTML.
+app.get('/', function(req, res) {
+    res.sendfile(req);
+});
 
 
-/**
- *  Define the sample application.
- */
-var SampleApp = function() {
 
-    //  Scope.
-    var self = this;
+// Our express application functions as our main listener for HTTP requests
+// in this example which is why we don't just invoke listen on the app object.
+server = require('http').createServer(app);
+server.listen(PORT, IPADDRESS);
 
 
-    /*  ================================================================  */
-    /*  Helper functions.                                                 */
-    /*  ================================================================  */
+// socket.io augments our existing HTTP server instance.
+io = require('socket.io').listen(server);
 
-    /**
-     *  Set up server IP address and port # using env variables/defaults.
-     */
-    self.setupVariables = function() {
-        //  Set the environment variables we need.
-        self.ipaddress = process.env.OPENSHIFT_INTERNAL_IP;
-        self.port      = process.env.OPENSHIFT_INTERNAL_PORT || 8080;
-
-        if (typeof self.ipaddress === "undefined") {
-            //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
-            //  allows us to run/test the app locally.
-            console.warn('No OPENSHIFT_INTERNAL_IP var, using 127.0.0.1');
-            self.ipaddress = "127.0.0.1";
-        };
+//entries typescript for annoyingly confusing javascript syntax
+var User = (function () {
+    function User(roomToJoin, nickToUse) {
+        this.room = roomToJoin;
+        this.hasControl = false;
+        this.nick = nickToUse;
+    }
+    User.prototype.getNick = function () {
+        return this.nick;
     };
-
-
-    /**
-     *  Populate the cache.
-     */
-    self.populateCache = function() {
-        if (typeof self.zcache === "undefined") {
-            self.zcache = { 'index.html': '' };
-        }
-
-        //  Local cache for static content.
-        self.zcache['index.html'] = fs.readFileSync('./index.html');
+    User.prototype.getRoom = function () {
+        return this.room;
     };
-
-
-    /**
-     *  Retrieve entry (content) from cache.
-     *  @param {string} key  Key identifying content to retrieve from cache.
-     */
-    self.cache_get = function(key) { return self.zcache[key]; };
-
-
-    /**
-     *  terminator === the termination handler
-     *  Terminate server on receipt of the specified signal.
-     *  @param {string} sig  Signal to terminate on.
-     */
-    self.terminator = function(sig){
-        if (typeof sig === "string") {
-           console.log('%s: Received %s - terminating sample app ...',
-                       Date(Date.now()), sig);
-           process.exit(1);
-        }
-        console.log('%s: Node server stopped.', Date(Date.now()) );
+    User.prototype.getHasControl = function () {
+        return this.hasControl;
     };
+    return User;
+})();
+io.sockets.on('connection', function (socket) {
+    
+    var user;
+    //join a room
+    socket.on('join', function(data) {
 
+        var nickToUse = data.nick;
+        var nickAddition = 1;
+        var nickTaken = false;
+        var canGrabControl = true;
+        //generate a good nick & check to see if someone has control, very quick-to-code solution
+        do
+        {
+            nickTaken = false;
+            if (nickAddition != 1) {
+                nickToUse = data.nick + nickAddition;
+            }
+            for (var i = 0; i < io.sockets.clients(String(data.room)).length; i++)
+            { 
+                var otherNick = io.sockets.clients(String(data.room))[i].userobj.getNick();
+                var otherHasControl = io.sockets.clients(data.room)[i].userobj.getHasControl();
+                if (nickToUse == otherNick) {
+                    nickTaken = true;
+                }
+                if (otherHasControl) {
+                    canGrabControl = false;
+                }
+            }
 
-    /**
-     *  Setup termination handlers (for exit and a list of signals).
-     */
-    self.setupTerminationHandlers = function(){
-        //  Process on exit and signals.
-        process.on('exit', function() { self.terminator(); });
+            nickAddition++;
+        } while (nickTaken);
+        
+        user = new User(String(data.room), nickToUse);
 
-        // Removed 'SIGPIPE' from the list - bugz 852598.
-        ['SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGILL', 'SIGTRAP', 'SIGABRT',
-         'SIGBUS', 'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGUSR2', 'SIGTERM'
-        ].forEach(function(element, index, array) {
-            process.on(element, function() { self.terminator(element); });
+        socket.userobj = user;
+        
+        user.hasControl = canGrabControl;
+        socket.join(data.room);
+        
+
+        //tell everyone a user joined.
+        socket.broadcast.to(user.getRoom()).emit('user-joined', {
+            nick: nickToUse
         });
-    };
 
+        socket.emit('control', {hasControl: canGrabControl, atConnection: true});
+    });
+    
+    //forward change events
+    socket.on('change', function(data) {
+        console.log(data);
+        socket.broadcast.to(user.room).emit('change', data);
 
-    /*  ================================================================  */
-    /*  App server functions (main app logic here).                       */
-    /*  ================================================================  */
+    });
 
-    /**
-     *  Create the routing table entries + handlers for the application.
-     */
-    self.createRoutes = function() {
-        self.routes = { };
-
-        // Routes for /health, /asciimo and /
-        self.routes['/health'] = function(req, res) {
-            res.send('1');
-        };
-
-        self.routes['/asciimo'] = function(req, res) {
-            var link = "http://i.imgur.com/kmbjB.png";
-            res.send("<html><body><img src='" + link + "'></body></html>");
-        };
-
-        self.routes['/'] = function(req, res) {
-            res.setHeader('Content-Type', 'text/html');
-            res.send(self.cache_get('index.html') );
-        };
-    };
-
-
-    /**
-     *  Initialize the server (express) and create the routes and register
-     *  the handlers.
-     */
-    self.initializeServer = function() {
-        self.createRoutes();
-        self.app = express.createServer();
-
-        //  Add handlers for the app (from the routes).
-        for (var r in self.routes) {
-            self.app.get(r, self.routes[r]);
-        }
-    };
-
-
-    /**
-     *  Initializes the sample application.
-     */
-    self.initialize = function() {
-        self.setupVariables();
-        self.populateCache();
-        self.setupTerminationHandlers();
-
-        // Create the express server and routes.
-        self.initializeServer();
-    };
-
-
-    /**
-     *  Start the server (starts up the sample application).
-     */
-    self.start = function() {
-        //  Start the app on the specific interface (and port).
-        self.app.listen(self.port, self.ipaddress, function() {
-            console.log('%s: Node server started on %s:%d ...',
-                        Date(Date.now() ), self.ipaddress, self.port);
+    //simple chat
+    socket.on('chat', function(data) {
+        socket.broadcast.to(String(user.room)).emit('msg', {
+            nick: socket.userobj.nick,
+            msg: data.msg
         });
-    };
-
-};   /*  Sample Application.  */
-
-
-
-/**
- *  main():  Main code.
- */
-var zapp = new SampleApp();
-zapp.initialize();
-zapp.start();
-
+    });
+    
+    // Set up listeners on the server side.
+    socket.once('disconnect', function() {
+        // Respond if the client side voluntarily disconnects, but respond
+        // only once. It appears that disconnecting will fire more disconnect
+        // messages, whether from the client or server. So respond once and
+        // only once for each client.
+    //    socket.broadcast.to(user.room).emit('user-left', {
+     //       nick: user.nick
+      //  });
+      //  disconnectSocket();
+    });
+});

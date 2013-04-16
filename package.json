@@ -1,22 +1,21 @@
 {
-  "name": "OpenShift-Sample-App",
-  "version": "1.0.0",
-  "description": "OpenShift Sample Application",
+  "name": "CodeSoar",
+  "version": "0.1.0",
+  "description": "CodeSoar RealTime Collaborate",
   "keywords": [
-    "OpenShift",
+    "CodeSoar",
     "Node.js",
-    "application",
-    "openshift"
+    "application"
   ],
   "author": {
-    "name": "OpenShift",
-    "email": "ramr@example.org",
-    "url":  "http://openshift.redhat.com/"
+    "name": "Martin Stauber",
+    "email": "martin.n.stauber@gmail.com",
+    "url":  "http://codesoar.com/"
   },
-  "homepage": "http://openshift.redhat.com/",
+  "homepage": "http://codesoar.com/",
   "repository": {
     "type": "git",
-    "url": "https://gitub.com/openshift/origin-server"
+    "url": "ssh://516dbc525973ca2a5600028a@codesoar-nodejshost.rhcloud.com/~/git/codesoar.git/"
   },
 
   "engines": {
@@ -25,6 +24,8 @@
   },
 
   "dependencies": {
+    "socket.io": "0.9.x",
+    "express": "3.x"
   },
   "devDependencies": {},
   "bundleDependencies": [],
