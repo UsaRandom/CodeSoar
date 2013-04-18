@@ -33,6 +33,7 @@ var User = (function () {
         this.room = roomToJoin;
         this.hasControl = false;
         this.nick = nickToUse;
+        this.controlRequested = false;
     }
     User.prototype.getNick = function () {
         return this.nick;
@@ -126,17 +127,48 @@ io.sockets.on('connection', function (socket) {
 
 
 
+    socket.on('give-control', function(data) {
+        
+        var clientToGive = null;
+
+        for (var i=0; i < io.sockets.clients(socket.userObj.getRoom()).length; i++) {
+
+            if(io.sockets.clients(socket.userObj.getRoom())[i].userObj.getNick() == data.nick) {
+                clientToGive = io.sockets.clients(socket.userObj.getRoom())[i];
+            }
+
+        }
+
+        if (clientToGive) {
+
+            for (var i=0; i < io.sockets.clients(socket.userObj.getRoom()).length; i++) {
+                io.sockets.clients(socket.userObj.getRoom())[i].userObj.hasControl = false;
+                io.sockets.clients(socket.userObj.getRoom())[i].userObj.controlRequested = false
+            }
+
+            clientToGive.userObj.hasControl = true;
+            io.sockets.in(socket.userObj.getRoom()).emit('control-taken', {
+                nick: clientToGive.userObj.getNick()
+            });
+        }
+
+    });
 
 
 
 
     //on control request
-    socket.on('controlRequest', function(data) {
+    socket.on('control-request', function() {
+
+        if (socket.userObj.controlRequested) {
+            return;
+        }
+
 
         var controllingClient;
         var controlIsOpen = true;
 
-        for (var i=0; i < io.sockets.clients(socket.userObj.getRoom()).Length; i++) {
+        for (var i=0; i < io.sockets.clients(socket.userObj.getRoom()).length; i++) {
             if(io.sockets.clients(socket.userObj.getRoom())[i].userObj.getHasControl()) {
                 controlIsOpen = false;
                 controllingClient = io.sockets.clients(socket.userObj.getRoom())[i];
@@ -144,11 +176,20 @@ io.sockets.on('connection', function (socket) {
         }
 
         if (controlIsOpen) {
+
+            for (var i=0; i < io.sockets.clients(socket.userObj.getRoom()).length; i++) {
+                io.sockets.clients(socket.userObj.getRoom())[i].userObj.hasControl = false;
+                io.sockets.clients(socket.userObj.getRoom())[i].userObj.controlRequested = false
+            }
+            socket.userObj.hasControl = true;
             io.sockets.in(socket.userObj.getRoom()).emit('control-taken', {
                 nick: socket.userObj.getNick()
             });
+
         } else {
-            io.sockets.clients(socket.userObj.getRoom())[i].emit('control-requested', {
+
+            socket.userObj.controlRequested = true;
+            controllingClient.emit('control-requested', {
                 nick: socket.userObj.getNick()
             });
         }
@@ -187,11 +228,21 @@ io.sockets.on('connection', function (socket) {
     // Set up listeners on the server side.
     socket.once('disconnect', function() {
 
-        //notify everyone a user left and whether they had control or not
-       io.sockets.in(user.getRoom()).emit('user-left', {
-            nick: user.getNick(),
-            controlOpen: user.getHasControl()
-        });
-
+        try
+        {
+            if(socket.userObj.getHasControl()) {
+                for (var i=0; i < io.sockets.clients(socket.userObj.getRoom()).length; i++) {
+                    io.sockets.clients(socket.userObj.getRoom())[i].userObj.controlRequested = false;
+                }
+            }
+            //notify everyone a user left and whether they had control or not
+            io.sockets.in(socket.userObj.getRoom()).emit('user-left', {
+                nick: socket.userObj.getNick(),
+                controlOpen: socket.userObj.getHasControl()
+            });
+        }
+        catch (err) {
+            console.log(err);
+        }
     });
 });
