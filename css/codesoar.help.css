@@ -1,0 +1,13 @@
+.thumbnail h5
+{
+  line-height: 0;
+}
+.affix
+{
+  top: 30px;
+}
+.thumbnail p
+{
+  line-height: 10px;
+  margin: 2px;
+}

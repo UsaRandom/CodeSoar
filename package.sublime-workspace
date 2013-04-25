@@ -1,0 +1,369 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"nickTa",
+				"nickTake"
+			],
+			[
+				"liveview",
+				"liveview"
+			],
+			[
+				"re",
+				"returnMessages"
+			],
+			[
+				"SessionID",
+				"sessionID"
+			],
+			[
+				"url",
+				"url"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "Packages/Java/Ant.sublime-build",
+	"command_palette":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+		],
+		"width": 392.0
+	},
+	"console":
+	{
+		"height": 125.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/C/Users/mstauber/Desktop/New folder/wetlist.lua",
+		"/C/xampp/htdocs/node/codesoar/server.js",
+		"/C/xampp/htdocs/routes.php",
+		"/C/xampp/htdocs/config.php",
+		"/C/xampp/php/php.ini",
+		"/C/xampp/htdocs/.htaccess",
+		"/C/xampp/htdocs/Views/Home/help.tpl",
+		"/C/xampp/htdocs/Views/Home/home.tpl",
+		"/C/xampp/htdocs/Views/Home/about.tpl",
+		"/C/xampp/htdocs/Views/Editor/editor.tpl",
+		"/C/xampp/htdocs/nodejs/liveview.js",
+		"/C/xampp/htdocs/Controllers/EditorController.php",
+		"/C/xampp/htdocs/Models/EditorModel.php",
+		"/C/xampp/htdocs/index.php",
+		"/C/xampp/htdocs/webroot/index.php",
+		"/C/xampp/htdocs/Templates/footer.tpl",
+		"/C/xampp/htdocs/webroot/js/socket.io/socket.io.js",
+		"/C/xampp/htdocs/webroot/js/socket.io.js",
+		"/C/Users/Martin/Downloads/socket.io-master/socket.io-master/test/socket.io.js",
+		"/C/Users/Martin/Downloads/socket.io-master/socket.io-master/index.js",
+		"/C/xampp/htdocs/webroot/js/mode-less.js",
+		"/C/xampp/htdocs/webroot/js/chat.io.js",
+		"/C/Users/Martin/AppData/Roaming/Sublime Text 2/Packages/User/buildLiveView.sublime-build",
+		"/C/xampp/htdocs/chatty/chatty/common/models.js",
+		"/C/xampp/htdocs/chatty/chatty/server.js",
+		"/C/xampp/htdocs/chatty/chatty/package.json",
+		"/C/xampp/htdocs/webroot/js/editor.io.js",
+		"/C/xampp/htdocs/liveview.sublime-project",
+		"/C/xampp/htdocs/liveview.sublime-workspace",
+		"/C/xampp/htdocs/build.sublime-build",
+		"/C/xampp/htdocs/install.sql",
+		"/C/Program Files/Serviio/config/profiles.xml",
+		"/C/Users/Martin/Desktop/openmp/Example/MatrixMul.java",
+		"/C/Users/Martin/Desktop/sr/GlobalMembersMain.java",
+		"/C/Users/Martin/Desktop/sr/GlobalMembersBtvregularization.java",
+		"/C/Users/Martin/Desktop/sr/GlobalMembersCreateDownsampledMotionandBlurCCDSparseMat32f.java",
+		"/C/Users/Martin/Desktop/sr/GlobalMembersGetPSNR.java",
+		"/C/Users/Martin/Desktop/sr/GlobalMembersHeader.java",
+		"/C/Users/Martin/Desktop/sr/GlobalMembersMulSparseMat32f.java",
+		"/C/Users/Martin/Desktop/sr/GlobalMembersSubtract_sign.java",
+		"/C/Users/Martin/Desktop/sr/GlobalMembersSum_float_OMP.java",
+		"/C/Users/Martin/Desktop/sr/GlobalMembersSuperresolutionSparseMat32f.java",
+		"/C/Users/Martin/Desktop/sr/GlobalMembersVisualizeSparseMat.java",
+		"/C/Users/Martin/Desktop/sr/AnonymousEnum.java",
+		"/C/Users/Martin/Desktop/sr/GlobalMembersAddgaussnoise.java",
+		"/C/Users/Martin/Desktop/sr/GlobalMembersAddspikenoise.java",
+		"/C/Users/Martin/Desktop/sr/GlobalMembersCreateDegradedImageandSparseMat32F.java",
+		"/C/xampp/htdocs/Models/ChatModel.php",
+		"/C/xampp/htdocs/Controllers/ChatController.php",
+		"/C/Users/Martin/access_log_20130404 (1)/ipg.hdifycom",
+		"/C/Users/Martin/AppData/Local/Temp/7zO733B.tmp/ipg.hdifycom",
+		"/C/Users/Martin/Downloads/access_log_20130404/ipg.hdifycom",
+		"/C/xampp/htdocs/webroot/.htaccess",
+		"/C/xampp/htdocs/asdf/message.php",
+		"/C/xampp/htdocs/asdf/index.php",
+		"/C/xampp/htdocs/liveview/Views/Editor/editor.tpl",
+		"/C/xampp/htdocs/liveview/Views/Home/home.tpl",
+		"/C/xampp/htdocs/liveview/Models/EditorModel.php",
+		"/C/xampp/htdocs/liveview/Controllers/EditorController.php",
+		"/C/xampp/htdocs/liveview/routes.php",
+		"/C/xampp/htdocs/liveview/Templates/header.tpl",
+		"/C/xampp/htdocs/liveview/archive/request.php",
+		"/C/xampp/htdocs/liveview/Helpers/MySqlUtil.php",
+		"/C/xampp/htdocs/liveview/webroot/index.php",
+		"/C/xampp/htdocs/liveview/webroot/js/keybinding-emacs.js",
+		"/C/xampp/htdocs/liveview/webroot/js/keybinding-vim.js",
+		"/C/xampp/htdocs/liveview/config.php",
+		"/C/xampp/htdocs/liveview/Templates/footer.tpl",
+		"/C/xampp/htdocs/liveview/archive/db/mySqlUtil.php",
+		"/C/xampp/htdocs/liveview/Views/Errors/error404.tpl",
+		"/C/xampp/htdocs/liveview/Models/Model.php",
+		"/C/Users/Martin/Desktop/emailer.php",
+		"/C/Users/Martin/Desktop/html5/HTML5Patch_files/modernizr-1.6.min.js",
+		"/C/Users/Martin/Desktop/html5/HTML5Patch.htm",
+		"/C/Users/Martin/Desktop/The HTML5 logo - K3D demo in HTML5 Canvas and JavaScript (no Flash!).htm",
+		"/C/Users/Martin/Downloads/isometric_skin/isometric_skin/skin.php",
+		"/C/Users/Martin/Downloads/isometric_skin/isometric_skin/view.php",
+		"/C/Users/Martin/Desktop/Minecraft skin viewer.htm",
+		"/C/xampp/htdocs/minecraft_skin.js",
+		"/C/xampp/htdocs/liveview/archive/db/docDir.php",
+		"/C/Users/Martin/Downloads/wetfish-bbs-master/wetfish-bbs-master/models/comment.php",
+		"/C/Users/Martin/Downloads/wetfish-bbs-master/wetfish-bbs-master/controllers/thread.php",
+		"/C/Users/Martin/Downloads/wetfish-bbs-master/wetfish-bbs-master/controllers/new.php",
+		"/C/xampp/htdocs/liveview/Views/Home/about.tpl",
+		"/C/xampp/htdocs/liveview/.htaccess",
+		"/C/xampp/htdocs/liveview/webroot/.htaccess",
+		"/C/Users/Martin/liveview/config.php",
+		"/C/Users/Martin/Downloads/wetfish-bbs-master/wetfish-bbs-master/public_html/index.php",
+		"/C/Users/Martin/liveview/Models/Editor.php",
+		"/C/Users/Martin/liveview/routes.php",
+		"/C/Users/Martin/liveview/webroot/index.php",
+		"/C/Users/Martin/liveview/Templates/header.tpl",
+		"/C/Users/Martin/liveview/Templates/footer.tpl",
+		"/C/Users/Martin/Downloads/wetfish-bbs-master/wetfish-bbs-master/views/new.php",
+		"/C/Users/Martin/Downloads/wetfish-bbs-master/wetfish-bbs-master/shared/pathParser.php",
+		"/C/Users/Martin/liveview/Views/Home/home.tpl",
+		"/C/Users/Martin/liveview/Templates/home.tpl",
+		"/C/Users/Martin/liveview/Templates/editor.tpl",
+		"/C/Users/Martin/Downloads/wetfish-bbs-master/wetfish-bbs-master/templates/basic.php",
+		"/C/Users/Martin/liveview/Views/Editor/editor.tpl",
+		"/C/Users/Martin/Downloads/wetfish-bbs-master/wetfish-bbs-master/models/thread.php",
+		"/C/Users/Martin/liveview/Models/Editor/Editor.php",
+		"/C/Users/Martin/Downloads/cakephp-cakephp-2.3.1-0-g48149cb/cakephp-cakephp-af0dfb5/app/View/Errors/error400.ctp",
+		"/C/Users/Martin/liveview/Views/Errors/error404.tpl",
+		"/C/Users/Martin/Downloads/wetfish-bbs-master/wetfish-bbs-master/shared/actionParser.php",
+		"/C/Users/Martin/Downloads/cakephp-cakephp-2.3.1-0-g48149cb/cakephp-cakephp-af0dfb5/app/webroot/index.php",
+		"/C/Users/Martin/Downloads/cakephp-cakephp-2.3.1-0-g48149cb/cakephp-cakephp-af0dfb5/app/index.php",
+		"/C/Users/Martin/liveview/.htaccess",
+		"/C/Users/Martin/liveview/webroot/.htaccess",
+		"/C/Users/Martin/Downloads/cakephp-cakephp-2.3.1-0-g48149cb/cakephp-cakephp-af0dfb5/app/Model/AppModel.php",
+		"/C/Users/Martin/liveview/archive/index.php",
+		"/C/Users/Martin/liveview/index.php",
+		"/C/Users/Martin/Downloads/cakephp-cakephp-2.3.1-0-g48149cb/cakephp-cakephp-af0dfb5/.htaccess",
+		"/C/Users/Martin/Downloads/cakephp-cakephp-2.3.1-0-g48149cb/cakephp-cakephp-af0dfb5/app/.htaccess",
+		"/C/Users/Martin/Desktop/ibl.messaging.php",
+		"/C/Users/Martin/Dropbox/ibl/Web/app/View/Layouts/default.ctp",
+		"/C/Users/Martin/Dropbox/ibl/Web/app/View/Pages/home.ctp",
+		"/C/Users/Martin/Dropbox/ibl/Web/app/webroot/.htaccess",
+		"/C/Users/Martin/Dropbox/ibl/Web/app/.htaccess",
+		"/C/Users/Martin/Dropbox/ibl/Web/.htaccess",
+		"/C/Users/Martin/Dropbox/ibl/Web/app/Config/database.php",
+		"/C/Users/Martin/Dropbox/ibl/Web/app/Config/core.php",
+		"/C/Users/Martin/Dropbox/ibl/Web/lib/Cake/Utility/Debugger.php",
+		"/C/Users/Martin/Downloads/cakephp-cakephp-2.3.1-0-g48149cb (1)/cakephp-cakephp-af0dfb5/index.php",
+		"/C/Users/Martin/Downloads/cakephp-cakephp-2.3.1-0-g48149cb (1)/cakephp-cakephp-af0dfb5/README.md",
+		"/C/xampp/htdocs/app/Config/routes.php",
+		"/C/xampp/htdocs/app/Model/Post.php",
+		"/C/xampp/htdocs/app/View/Posts/edit.ctp"
+	],
+	"find":
+	{
+		"height": 44.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+			"",
+			"C:\\xampp\\htdocs\\liveview",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+			"join'",
+			"userobj",
+			"mysql.dll",
+			"mysql",
+			"LiveView",
+			"'title'",
+			"$title",
+			"userobj",
+			"get",
+			"set",
+			"sign_float",
+			"500",
+			"'",
+			"`",
+			"'",
+			"timestamp,",
+			" NOT NULL",
+			"GLOBALS",
+			"UpdateTimer",
+			"%20",
+			"ees",
+			" ",
+			"cocrse",
+			"amount",
+			"%20",
+			"create",
+			"$data",
+			"GetBomByPlanID",
+			"[",
+			"Helpers",
+			"$selectedView",
+			"./",
+			"var",
+			"turn",
+			"logo",
+			"setTransform",
+			"function setTra",
+			"setTransform",
+			"container-narrow",
+			"1",
+			"<?",
+			"Editor.swf",
+			"GamePreloader",
+			"Tpl",
+			"FSTpl",
+			"db",
+			"Game.swf",
+			"warningLog",
+			"infoLog",
+			"debugLog",
+			"order",
+			"orderCount",
+			"BomDir",
+			"endOrder",
+			"startOrder",
+			"ordersPerPage"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"userObj",
+			"CodeSoar",
+			"`",
+			"timestamp NULL,`",
+			"timestamp NULL,",
+			"",
+			" ",
+			"%20",
+			" ",
+			"$GLOBALS",
+			"$GLOBALS['selectedView']",
+			"epreloader.swf",
+			"preloader",
+			"GamePreloader.swf",
+			"errorLog",
+			"warningLog",
+			"infoLog",
+			"logCount",
+			"LogDir",
+			"endLog",
+			"startLog",
+			"logsPerPage"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 24.0
+	},
+	"replace":
+	{
+		"height": 62.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+			[
+				"",
+				"/C/xampp/htdocs/liveview.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 234.0,
+	"status_bar_visible": true
+}

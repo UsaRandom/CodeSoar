@@ -99,7 +99,6 @@ io.sockets.on('connection', function (socket) {
             controllingUser = user.getNick();
         }
         socket.join(data.room);
-        
 
         //tell everyone a user joined.
         socket.broadcast.to(user.getRoom()).emit('user-joined', {

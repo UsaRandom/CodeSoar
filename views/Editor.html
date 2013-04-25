@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta charset="utf-8"/>
+
+	<title>CodeSoar</title>
+
+	<!-- Favicon -->
+	<link rel="icon" href="http://codesoar.com/favicon.ico" type="image/x-icon" />
+	<link rel="shortcut icon" href="http://codesoar.com/favicon.ico" type="image/x-icon" />
+
+	<!-- CSS References -->
+	<link href="http://codesoar.com/css/bootstrap.min.css" type="text/css" rel="stylesheet">
+	<link href="http://codesoar.com/css/codesoar.editor.css" type="text/css" rel="stylesheet">
+
+	<!-- Javascript References -->
+	<script src="http://codesoar.com/js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://codesoar.com/js/ace.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://codesoar-nodejshost.rhcloud.com:8000/socket.io/socket.io.js" charset="utf-8"></script>
+	<script src="http://codesoar.com/js/bootstrap.min.js" charset="utf-8"></script>
+
+	<!-- Google Analytics Code -->
+	<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-40198626-1', 'codesoar.com');
+	ga('send', 'pageview');
+	</script>
+
+</head>
+<body>
+
+	<div id="displayNameModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="displayNameModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<a class="close" data-dismiss="modal">&times;</a>
+			<h3 id="displayNameModalLabel">Display Name</h3>
+		</div>
+		<div class="modal-body">
+			<label>Enter the display name for you to use when editing this document.</label>
+			<input type="text" maxlength="20" id="nickInput" placeholder="Anonymous">
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Set</button>
+		</div>
+	</div>
+	<div id="editor"><!-- 
+
+
+
+
+
+
+
+	SOURCE CODE GOES HERE!!!! 
+
+
+
+
+
+
+
+	--></div>
+	<div id="right-col">
+		<div id="controls">
+			<button type="button" id="requestCtrlBtn" class="btn btn-mini btn-primary disabled"><i class="icon-edit"></i> Request Control</button>
+		</div>
+		<div id="users">
+			<ul>
+			</ul>
+		</div>
+		<div id="chatContainer">
+			<div id="chatHeader">
+				<h5><i class="icon-comment"></i> Chat</h5>
+			</div>
+			<div id="chat">
+				<ul id="chatMsgs">
+				</ul>
+				<div id="bottomOfMsgs"></div>
+			</div>
+		</div>
+		<input id="chatText" class="span2" type="text" placeholder="Enter Message here...">
+	</div>
+	<script src="http://codesoar.com/js/codesoar.editor.js" charset="utf-8"></script>
+</body>
+</html>
