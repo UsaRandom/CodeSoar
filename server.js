@@ -19,7 +19,7 @@ var db = new Db(process.env.OPENSHIFT_APP_NAME, dbServer, {auto_reconnect: true,
  
 var app = express();
 var docs = {};
-
+var changesDb ={};
 
 
 db.open(function(err, db){
@@ -32,17 +32,27 @@ db.open(function(err, db){
 
 db.createCollection('docs');
 
-function getCollection(callback) {
-  db.collection('docs', function(error, collection) {
+db.createCollection('changes');
+
+
+function getCollection(name,callback) {
+  db.collection(name, function(error, collection) {
     if( error ) callback(error);
     else callback(null, collection);
   });
 };
 
-getCollection(function(err, collection) {
+getCollection('docs',function(err, collection) {
     if (err)
         throw err;
     docs = collection;
+});
+
+
+getCollection('changes',function(err, collection) {
+    if (err)
+        throw err;
+    changesDb = collection;
 });
 
 //Generates a fairly random doc ID
@@ -133,8 +143,8 @@ app.post("/create", function(req, res) {
 
 app.get('/view/:document', function(req, res) {
     
-    docs.find({docID: req.params.document}, function(err,docs) {
-        docs.each(function (err, doc) {
+    docs.find({docID: req.params.document}, function(err,documents) {
+        documents.each(function (err, doc) {
                console.log(doc);
         if(!doc) {
             routes.fourOhFour(req, res);
@@ -239,12 +249,23 @@ io.sockets.on('connection', function (socket) {
         }
         socket.join(data.room);
 
+        changesDb.find({docID: data.room}, function(err,changesMade) {
+            changesMade.each(function (err2, change) {
+                    if(change)
+                         {
+                    socket.emit('change', change.change);
+                    }
+            });
+
         //tell everyone a user joined.
         socket.broadcast.to(user.getRoom()).emit('user-joined', {
             nick: nickToUse
         });
 
-        socket.emit('join', {hasControl: user.hasControl, users: currentUsers, controller: controllingUser, realNick: nickToUse });
+      
+             socket.emit('join', {hasControl: user.hasControl, users: currentUsers, controller: controllingUser, realNick: nickToUse});
+        });
+
     });
 
 
@@ -259,6 +280,8 @@ io.sockets.on('connection', function (socket) {
     //forward change events
     socket.on('change', function(data) {
         socket.broadcast.to(user.room).emit('change', data);
+
+        changesDb.insert({docID: user.room, change: data}, {w:0});
 
     });
 
