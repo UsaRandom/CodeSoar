@@ -30,7 +30,8 @@
     "socket.io": "0.9.x",
     "express": "3.x",
     "mongodb" : "> 1.1.10",
-    "jade" : "*"
+    "jade" : "*",
+    kerberos: "0.0.2"
   },
   "devDependencies": {},
   "bundleDependencies": [],
