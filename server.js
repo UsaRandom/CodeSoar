@@ -253,7 +253,7 @@ io.sockets.on('connection', function (socket) {
             changesMade.each(function (err2, change) {
                     if(change)
                          {
-                    socket.emit('change', change.change);
+                    socket.emit('update', change.change);
                     }
             });
 
