@@ -253,8 +253,25 @@
 
 
 |    socket.on('change', function(data) {
+|      if (!codeSoar.hasControl) {
 |        codeSoar.editor.getSession().getDocument().applyDeltas([JSON.parse(data)]);
+|      }
+|      else {
+|        //huh?
+|        alert("need to refactor some, out of synch");
+|      }
 |    });
+
+	 socket.on('update', function(data) {
+	 	if (codeSoar.hasControl) {
+	 		codeSoar.hasControl = false;
+	 		codeSoar.editor.getSession().getDocument().applyDeltas([JSON.parse(data)]);
+	 		codeSoar.hasControl = true;
+	 	}
+	 	else {
+	 		codeSoar.editor.getSession().getDocument().applyDeltas([JSON.parse(data)]);
+	 	}
+	 });
 
 |  }
 
