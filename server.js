@@ -158,6 +158,10 @@ server = http.createServer(app);
 server.listen(parseInt(process.env.OPENSHIFT_INTERNAL_PORT) || 8080);
 
 
+// Our express application functions as our main listener for HTTP requests
+// in this example which is why we don't just invoke listen on the app object.
+server = require('http').createServer(app);
+server.listen(OPENSHIFT_INTERNAL_PORT  || 8080, OPENSHIFT_INTERNAL_IP);
 
 
 // socket.io augments our existing HTTP server instance.
