@@ -253,13 +253,7 @@
 
 
 |    socket.on('change', function(data) {
-|      if (!codeSoar.hasControl) {
 |        codeSoar.editor.getSession().getDocument().applyDeltas([JSON.parse(data)]);
-|      }
-|      else {
-|        //huh?
-|        alert("need to refactor some, out of synch");
-|      }
 |    });
 
 |  }
