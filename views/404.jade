@@ -1,0 +1,25 @@
+extends pagelayout
+
+block append meta
+	meta(name='viewport', content='width=device-width')
+
+block css
+	link(rel='stylesheet', href='/stylesheets/404.css')
+
+block scripts
+	script(type='text/javascript',src='javascripts/jquery.min.js')
+
+block body
+	canvas#background(height='793', width='793', style='margin-top: -296px; margin-left: -13px; -webkit-transform-origin: 396.5px 396.5px;')
+		h1 404
+		h2 Not Found
+		h5 Sorry :'(
+	div#horizon
+		div#content
+			h1 404
+			h2 Not Found
+			h5 Sorry :'(
+
+	//Thanks to Felix Niklas for the awesome rotating sun :)
+	script(type='text/javascript', src='/javascripts/modernizr-1.6.min.js')
+	script(type='text/javascript', src='/javascripts/404.js')

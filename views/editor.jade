@@ -1,0 +1,41 @@
+extends pagelayout
+
+block css
+	link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
+	link(rel='stylesheet', href='/stylesheets/codesoar.editor.css')
+
+block append scripts
+	script(type='text/javascript', src='/javascripts/ace.js', charset='utf-8')
+	script(type='text/javascript', src='http://localhost:8000/socket.io/socket.io.js', charset='utf-8')
+
+block body
+	div#displayNameModal.modal.hide.fade(tabindex='-1', role='dialog', aria-labelledby='displayNameModalLabel', aria-hidden='true')
+		div.modal-header
+			a.close(data-dismiss='modal') &times;
+			h3#displayNameModalLabel Display Name
+		div.modal-body
+			label Enter the display name for you to use while editing this document.
+			input#nickInput(type='text', maxlength='20', placeholder='Anonymous')
+		div.modal-footer
+			button.btn.btn-primary(data-dismiss='modal', aria-hidden='true') Set
+
+	//Editor
+	div#editor #{src}
+
+	div#right-col
+		div#controls
+			button#requestCtrlBtn.btn.btn-mini.btn-primary.disabled(type='button')
+				i.icon-edit
+				|  Request Control
+		div#users
+			ul
+		div#chatContainer
+			div#chatHeader
+				h5
+					i.icon-comment
+					|  Chat
+			div#chat
+				ul#chatMsgs
+				div#bottomOfMsgs
+		input#chatText.span2(type='text', placeholder='Enter message here...')
+	script(type='text/javascript', src='/javascripts/#{language}/#{docid}')

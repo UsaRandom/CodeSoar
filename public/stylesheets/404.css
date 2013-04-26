@@ -1,0 +1,82 @@
+* { margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; background: rgb(242,242,242); font-family: sans-serif; }
+#background { position: absolute;}
+
+#horizon        
+{
+background-color: transparent;
+text-align: center;
+
+position: absolute;
+top: 50%;
+left: 0px;
+width: 100%;
+height: 1px;
+overflow: visible;
+visibility: visible;
+display: block
+}
+
+#content    
+{
+background-color: transparent;
+margin-left: -125px;
+position: absolute;
+top: -35px;
+left: 50%;
+width: 250px;
+height: 70px;
+visibility: visible
+}
+
+h1 {
+
+font-size: 4em;
+
+}
+
+
+.cssanimations #background {
+-webkit-animation-duration: 18s;
+-moz-animation-duration: 18s;
+-o-animation-duration: 18s;
+-ms-animation-duration: 18s;
+animation-duration: 18s;
+-webkit-animation-iteration-count: infinite;
+-moz-animation-iteration-count: infinite;
+-o-animation-iteration-count: infinite;
+-ms-animation-iteration-count: infinite;
+animation-iteration-count: infinite;
+-webkit-animation-timing-function: linear;
+-moz-animation-timing-function: linear;
+-o-animation-timing-function: linear;
+-ms-animation-timing-function: linear;
+animation-timing-function: linear;
+}
+.cssanimations #background { 
+-webkit-animation-name: sunray;
+-moz-animation-name: sunray;
+-o-animation-name: sunray;
+-ms-animation-name: sunray;
+animation-name: sunray;
+}
+@-webkit-keyframes sunray {
+from { -webkit-transform: rotateZ(0) translateZ(-100px); }
+to { -webkit-transform: rotateZ(-359deg) translateZ(-100px); }
+}
+@-moz-keyframes sunray {
+from { -moz-transform: rotateZ(0) translateZ(-100px); }
+to { -moz-transform: rotateZ(-359deg) translateZ(-100px); }
+}
+@-o-keyframes sunray {
+from { -o-transform: rotateZ(0) translateZ(-100px); }
+to { -o-transform: rotateZ(-359deg) translateZ(-100px); }
+}
+@-ms-keyframes sunray {
+from { -ms-transform: rotateZ(0) translateZ(-100px); }
+to { -ms-transform: rotateZ(-359deg) translateZ(-100px); }
+}
+@keyframes sunray {
+from { transform: rotateZ(0) translateZ(-100px); }
+to { transform: rotateZ(-359deg) translateZ(-100px); }
+}

@@ -1,0 +1,118 @@
+extends pagelayout
+
+block append css
+	link(rel='stylesheet', href='/stylesheets/codesoar.help.css')
+
+block content
+	div.page-header
+		h1 Help
+	div.row-fluid
+		div.span4
+			div(data-spy='affix', data-offset-top='180')
+				div.well.sidebar-nav
+					ul#helpNav.nav.nav-list
+						li
+							a(href='#browserSupport') Browser Support
+						li
+							a(href='#languages') Languages
+						li
+							a(href='#invitingPeople') Inviting People
+						li
+							a(href='#cooperativeControl') Cooperative Control
+						li
+							a(href='#codeExperation') Code Expiration
+		div.span8
+			div#browserSupport
+				h3 Browser Support
+				p
+					| CodeSoar uses 
+					a(href='http://jquery.com/') jQuery
+					|  &amp; the
+					a(href='http://ace.ajax.org/') Ace Editor
+					|  to provide you with a cooperative development experience. 
+					| To produce this experience, a modern browser is required.
+					em Note: IE support is broken right now, fixing soon.
+				p
+					em Browser version requirements:
+				ul.thumbnails
+					li.span2
+						div.thumbnail
+							img(src='/images/firefox.png', alt='firefox icon')
+							h5.text-center Firefox
+							p.text-center
+								small 3.5+
+					li.span2
+						div.thumbnail
+							img(src='/images/chrome.png', alt='chrome icon')
+							h5.text-center Chrome
+							p.text-center
+								small Updated
+					li.span2
+						div.thumbnail
+							img(src='/images/safari.png', alt='safari icon')
+							h5.text-center Safari
+							p.text-center
+								small 4+
+					li.span2
+						div.thumbnail
+							img(src='/images/ie.png', alt='internet explorer icon')
+							h5.text-center IE
+							p.text-center
+								small
+									em [broken]
+					li.span2
+						div.thumbnail
+							img(src='/images/opera.png', alt='opera icon')
+							h5.text-center Opera
+							p.text-center
+								small 11.5+
+			div#languages
+				h3 Languages
+				p
+					| For current testing purposes, CodeSoar only supports a handful of 
+					| programming languages along with plain text. Language support will 
+					| be extended in the future once the site is fully functional.
+				p
+					em Currently supported Languages:
+				div.row-fluid
+					div.span6
+						ul
+							li C &amp; C++
+							li C#
+							li CSS
+							li HTML
+							li Java
+							li Javascript
+							li PHP
+					div.span6
+						ul
+							li Python
+							li Ruby
+							li SQL
+							li Text
+							li VB Script
+							li XML
+			div#invitingPeople
+				h3 Inviting People
+				p
+					| To invite a person to join your CodeSoar session, simply copy and paste
+					| the URL at the top of your browser in your edit session; Or you can press 
+					| the 'Invite' button on the top right of the editor screen and the link 
+					| will be copied to your clipboard.
+			div#cooperativeControl
+				h3 Cooperative Control
+				p
+					| In the CodeSoar editor, only one user can make changes to the document 
+					| at a time. This user can pass on control of the document to other users 
+					| viewing the document. Users who are viewing the document can notify the 
+					| controlling user that they would like control through the 'Request 
+					| Control' button.
+				p
+					| The CodeSoar editor also has a simple instant-chat box that allows you 
+					| to message other users who are viewing the document.
+			div#codeExperation
+				h3 Code Experation
+				p
+					| Currently there is no experation date for Code and Documents created 
+					| on CodeSoar. However this is subject to change as this service matures.
+

@@ -1,0 +1,51 @@
+extends pagelayout
+
+block append css
+	link(rel='stylesheet', href='/stylesheets/codesoar.home.css')
+
+block append scripts
+	script(type='text/javascript', src='/javascripts/ace.js', charset='utf-8')
+
+block content
+	h1.text-center Co-Op Code in Real-Time
+	p.text-center
+		| Copy and Paste some code, select the language and press go!
+		| Share the link and collaborate with friends!
+	p.text-center
+		strong Note:
+		em Currently under construction; some features missing.
+	div#editor_demo
+		| 
+		| function add(x, y) {
+		| 	console.log("Coding is fun! Even more with friends!");
+		| 
+		| 	//Math is Hard...
+		|	return 4;
+		| }
+		| 
+		| var addResult = add(3, 2);
+		| console.log(addResult);
+	br
+	div.row-fluid
+		div.span2
+		div.span6
+			label Language:
+			select#language_select
+				option(data-att='c_cpp') C/C++
+				option(data-att='csharp') C#
+				option(data-att='css') CSS
+				option(data-att='html') HTML
+				option(data-att='java') Java
+				option(data-att='javascript') Javascript
+				option(data-att='php') PHP
+				option(data-att='python') Python
+				option(data-att='ruby') Ruby
+				option(data-att='sql') SQL
+				option(data-att='text') Text
+				option(data-att='vbscript') VB Script
+				option(data-att='xml') XML
+		div.span2
+			button#go_btn.btn.btn-large.btn-primary(type='button') GO
+		div.span2
+block end
+	script(type='text/javascript', src='/javascripts/codesoar.home.js', charset='utf-8')

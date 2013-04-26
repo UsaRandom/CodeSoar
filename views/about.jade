@@ -1,0 +1,39 @@
+extends pagelayout
+
+block append css
+	link(rel='stylesheet', href='/stylesheets/codesoar.about.css')
+
+
+block content
+	div.page-header
+		h1 About
+	div.row-fluid
+		p
+			| Working with remote developers can have it's difficulties. Especially when trying 
+			| to do code reviews, or trying to explain how poorly documented code works.
+		p 
+			| Interviewing potential developers remotely can have it's difficulties too. Sure 
+			| you can give them a handful of programming problems to see if they can solve them,
+			|  but you can't know if they cheated and you don't get to observe their thought 
+			| process.
+		p
+			| This is why I made CodeSoar, to solve these simple problems.
+		p
+			| Oh and I also 
+			strong LOVE
+			|  to learn new tech (along with expanding on the old) and this site provided an
+			|  excellent experience to learn.
+		p
+			em Here's some of the tech used to give this site it's mojo:
+		
+		div#tech
+			img(src='/images/node.png')
+			img(src='/images/socket.png')
+			img(src='/images/bootstrap.png')
+			img(src='/images/express.png')
+			img(src='/images/mongodb.png')
+			img(src='/images/jquery.png')
+			img(src='/images/ace.png')
+		
+		p Need anything else? Email me at: 
+			a(href='mailto:martin.n.stauber@gmail.com') martin.n.stauber@gmail.com
