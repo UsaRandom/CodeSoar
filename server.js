@@ -14,7 +14,7 @@ var mongo = require('mongodb');
 
 var Server = mongo.Server,
     Db = mongo.Db;
-var dbServer = new mongodb.Server(process.env.OPENSHIFT_MONGODB_DB_HOST, parseInt(process.env.OPENSHIFT_MONGODB_DB_PORT));
+var dbServer = new mongo.Server(process.env.OPENSHIFT_MONGODB_DB_HOST, parseInt(process.env.OPENSHIFT_MONGODB_DB_PORT));
 var db = new Db(process.env.OPENSHIFT_APP_NAME, dbServer, {auto_reconnect: true});
  
 var app = express();
