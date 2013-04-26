@@ -178,7 +178,7 @@
 |  codeSoar.setup = function() {
 
 
-|    socket = io.connect("codesoar-nodejshost.rhcloud.com:8000");
+|    socket = io.connect("codesoar-nodejshost.rhcloud.com");
 |    socket.emit('join', { room: codeSoar.docID, nick: $("#nickInput").val() });
 
 
