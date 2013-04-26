@@ -15,7 +15,7 @@ var mongo = require('mongodb');
 var Server = mongo.Server,
     Db = mongo.Db;
 var dbServer = new mongo.Server(process.env.OPENSHIFT_MONGODB_DB_HOST, parseInt(process.env.OPENSHIFT_MONGODB_DB_PORT));
-var db = new Db(process.env.OPENSHIFT_APP_NAME, dbServer, {auto_reconnect: true});
+var db = new Db(process.env.OPENSHIFT_APP_NAME, dbServer, {auto_reconnect: true, w:1});
  
 var app = express();
 var docs = {};
@@ -73,7 +73,6 @@ function generateDocID(length) {
 
 
 // all environments
-app.set('port', process.env.PORT || 80);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 app.use(express.favicon());
@@ -155,15 +154,10 @@ app.use(function(req, res, next){
 
     routes.fourOhFour(req, res);
 });
-http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
-});
+server = http.createServer(app);
+server.listen(parseInt(process.env.OPENSHIFT_INTERNAL_PORT) || 8080);
 
 
-// Our express application functions as our main listener for HTTP requests
-// in this example which is why we don't just invoke listen on the app object.
-server = require('http').createServer(app);
-server.listen(PORT, IPADDRESS);
 
 
 // socket.io augments our existing HTTP server instance.
