@@ -251,7 +251,6 @@ $(document).ready(function () {
       codeSoar.controlRequested(data.nick);
     });
 
-
     socket.on('change', function(data) {
       if (!codeSoar.hasControl) {
         codeSoar.editor.getSession().getDocument().applyDeltas([JSON.parse(data)]);

@@ -1,0 +1,265 @@
+
+---------CodeClient-------------
+
+
+Cursor
+ -user : User //represents anothers users cursor
+ -setBlinking()
+ -update()
+ -id : str
+ -editorController : EditorController
+ -remove()
+
+ActiveLine
+ -user : User
+ -update()
+ -id : str
+ -remove()
+
+Selection
+ -user : User
+ -update()
+ -id : str
+ -remove()
+
+EditorController
+ -codeSoarSession : CodeSoarSession
+ -exeClient : ExeClient
+ -editor : AceEditor
+ -onEdit(evt)
+ -onMessage(evt)
+ -onCursorChange(evt)
+ -onSelectionChange(evt)
+ -onActiveLineChange(evt)
+ -onUserJoined(evt)
+ -onUserLeft(evt)
+ -onScroll(evt)
+ -sendEdit()
+ -sendMessage()
+ -sendScrollChange()
+ -sendSelectionChange()
+ -sendActiveLineChange()
+ -sendCursorChange()
+ -sendExeRequest()
+ -setAutoExe(data)
+ -user : User //The user of this session
+
+
+--------ExeClient-----------
+//New concept thanks to rachel
+//When editing html/javascript, synches changes made from users and runs them.
+
+ExeController
+ -documentId
+ -language
+
+HtmlExeClient : IExeClient
+
+
+--------Common----------
+
+User
+ -name
+ -docId
+ -canEdit //limit number of editors? if not we don't need.
+ -editStyle
+ -isActive
+ -exeClient
+ -scroll
+ -selectionData
+ -cursorData
+ -activeLine
+ -socket
+ -editNumber
+
+IExeClient
+ -id
+ -user
+ -setAutoExe
+ -execute
+
+EditStyle
+ -cursorColor
+ -lineColor
+ -selectionColor        ??? or
+ -selectionOutlineColor ??? or both?
+
+ILanguageData
+ -hasExeClient
+ -autoExeCapable
+
+DefaultLanguageData : ILanguageData
+
+HtmlLanguageData : ILanguageData
+
+CodeSoarSession
+ -docId
+ -users[]
+ -exeClients[]
+ -languageName
+ -languageData
+ -changeId [limit of about 9 quadrillion edits per document...]
+
+
+------Server------
+
+CodeSoarServer
+ -start
+ -getCodeSoarRoom(docId)
+
+CodeSoarRoom
+ -codeSoarSession
+ -removeUser (User)
+ -addUser (User)
+ -cleanUserName (str)
+ -serverClients[] : ServerClient[]
+ -serverUsers[] : User[]
+ -serverExeClients[] : IExeClient[]
+ -sendToRoom(msg, data)
+ -createExeClient(User)
+ 
+
+ServerClient
+ -user
+ -socket : (^user.socket)
+ -codeSoarSession
+ -exeClient
+
+
+
+
+
+
+
+
+
+
+
+
+
+ExeClient Markup:
+(http://codesoar.com/view/exe/:document)
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="http://codesoar.com/css/exe/:language"/>
+		<script src="http://codesoar.com/javascripts/exe/:language" charset="utf-8"/>
+	</head>
+	<body>
+		<!-- hidden, this is a hack to save bandwidth. (maybe) -->
+		<div id="editor" style="display: none;"></div>
+		<iframe id="exeFrame" src="about:blank">
+		</iframe>
+	</body>
+</html>
+
+
+
+
+ExeClient Javascript Clips:
+(http://codesoar.com/javascripts/exe/:language) [specifically html]
+
+//SETUP listening only client with hidden editor, every time an execution request is made, reload iFrame. (We could make it reload in real time, which would be cool.)
+
+
+//Fetch exeFrame
+var exeFrame = document.getElementById('exeFrame').contentWindow.document;
+
+//this will reload the iFrame with our changes.
+function reloadExe() {
+
+	//Calling open() will clear the document.
+	exeFrame.open();
+	exeFrame.write(editor.getValue());
+	exeFrame.close();
+}
+
+
+
+
+
+//
+//
+//
+// CURSOR/SELECTION/ETC  STUFF
+//
+//
+//
+
+
+NOTE: Code folding is an added annoyance, same with scrolling. 
+
+Fix:
+----------------------------------------
+
+Each line is 15px tall so 'height' is 15px, 'top' is set to 15px * (LineNumber-1), 'left' is set to 4px + (6px * ColumnNumber), 'width' is set to (Range.End.Col-Range.Start.Col) * 6px
+
+To fetch where they are scrolled to use 'editor.getSession().$scrollTop', this will return the padding in number of pixels. IT IS NOT always divisible by 15px.
+
+You will need to compare against code folds. This is best done by comparing the result of 'editor.getSession().documentToScreenPosition(Range.start.Row, Range.start.Col)' to 'Range.Start'. Obviously comparing the end as well.
+
+----------------------------------------
+
+
+
+//Cursor
+
+$("#editor_demo .ace_cursor-layer").append('<div class="ace_cursor" style="left: 10px; top: 90px; width: 6px; height: 15px;"></div>');
+
+<div class="ace_cursor" style="left: 10px; top: 90px; width: 6px; height: 15px;"></div>
+
+.ace_cursor {
+	border-left: 2px solid black;
+	border-left-width: 2px;
+	border-left-style: solid;
+	border-left-color: black;
+}
+
+
+//Active Line
+
+Under 'ace_marker-layer'
+
+//Set background color, has to have ace_active-line class. Use id's to indentify users.
+$("#editor_demo .ace_marker-layer").append('<div class="ace_active-line" style="height:15px;top:120px;left:0;right:0;"></div>');
+
+background: rgba(0, 255, 0, 0.07);
+
+
+
+//Selection
+
+Under 'ace_marker-layer'
+<div class="ace_selection" style="height:15px;width:6px;top:90px;left:4px;border: 1px solid red;"></div>
+
+There are ONE to THREE selection 'divs' per selection, top middle and bottom. They are determained by their 'top' css property in reference to zero. (ie, closest to zero is top, furthest bottom, and the one left is middle)
+
+
+To obtain a border:
+
+The top requires this css:
+
+border-top: 1px solid;
+border-left: 1px solid;
+border-right: 1px solid;
+
+
+The middle requires this css:
+
+z-index: 0; //required for correct border overlap
+border: 1px solid;
+
+
+The bottom requires this css:
+
+border-bottom: 1px solid;
+border-left: 1px solid;
+border-right: 1px solid;
+
+
+
+//Bracket
+Under ace_marker-layer
+
+<div class="ace_bracket ace_start" style="height:15px;width:6px;top:150px;left:148px;"></div>
