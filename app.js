@@ -15,7 +15,7 @@ var CodeSoar;
                 this.NODEJS_IP = nodeIP;
             }
             Config.Get = function () {
-                return CodeSoar.Server.Config._DEV;
+                return CodeSoar.Server.Config._PROD;
             };
 
             Config._DEV = new Config("http://localhost", "dev", "pass", "localhost", 27017, "codesoar", 80, '127.0.0.1', 8000, '127.0.0.1');
@@ -208,6 +208,11 @@ var CodeSoar;
     })(CodeSoar.Server || (CodeSoar.Server = {}));
     var Server = CodeSoar.Server;
 })(CodeSoar || (CodeSoar = {}));
+process.on('uncaughtException', function (err) {
+    console.error(err);
+    console.log("EXPLOSION!!! Node NOT Exiting...");
+});
+
 var express = require('express'), routes = require('./routes'), http = require('http'), path = require('path'), mongo = require('mongodb');
 
 var dbServer = new mongo.Server(CodeSoar.Server.Config.Get().MONGODB_HOST, CodeSoar.Server.Config.Get().MONGODB_PORT);

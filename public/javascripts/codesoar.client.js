@@ -730,17 +730,19 @@ var CodeSoar;
                 });
 
                 this.EditorSession.on('change', function (data) {
+                    if (data.data.ignore) {
+                        return;
+                    }
+
                     var dataClone = clone(data);
 
                     console.log(dataClone);
 
-                    if (dataClone.data.ignore) {
-                        return;
-                    }
-
                     delete dataClone.data.ignore;
 
                     var msg = CodeSoar.Common.Messages.EditMessageFactory.BuildEditMessage(dataClone.data);
+
+                    msg.Shrink();
 
                     self.m_socket.emit('edit', msg.ToJSON());
                 });
