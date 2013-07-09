@@ -116,12 +116,42 @@ var CodeSoar;
         (function (View) {
             var Cursor = (function () {
                 function Cursor() {
+                    this.m_id = CodeSoar.Client.View.Cursor.id++;
                 }
                 Cursor.prototype.Update = function (data) {
+                    if (typeof data != 'undefined') {
+                        this.row = data.r;
+                        this.col = data.c;
+                    }
+
+                    this.Paint();
+                };
+
+                Cursor.prototype.Paint = function () {
+                    if ($("#" + this.m_id).length == 0) {
+                        $("#editor .ace_cursor-layer").append('<div id="' + this.m_id + '"></div>');
+                    }
+
+                    var docPos = this.Editor.getSession().documentToScreenPosition(this.row, this.col);
+
+                    $("#" + this.m_id).css({
+                        'height': '15px',
+                        'top': 15 * (docPos.row) + 'px',
+                        'left': 4 + (6 * docPos.column) + 'px',
+                        'width': '6px',
+                        'z-index': 4,
+                        'position': 'absolute',
+                        '-moz-box-sizing': 'border-box',
+                        '-webkit-box-sizing': 'border-box',
+                        'box-sizing': 'border-box',
+                        'border-left': '2px solid red'
+                    });
                 };
 
                 Cursor.prototype.Remove = function () {
                 };
+
+                Cursor.id = 0;
                 return Cursor;
             })();
             View.Cursor = Cursor;
@@ -135,7 +165,8 @@ var CodeSoar;
     (function (Client) {
         (function (View) {
             var Selection = (function () {
-                function Selection() {
+                function Selection(editor) {
+                    this.Editor = editor;
                 }
                 Selection.prototype.Update = function (data) {
                 };
@@ -178,19 +209,6 @@ var CodeSoar;
                 function ViewCollection() {
                     this.m_views = Array(0);
                 }
-                ViewCollection.prototype.GetViewsByUser = function (user) {
-                    var views = new Array(0);
-
-                    for (var i = 0; i < this.m_views.length; i++) {
-                        if (this.m_views[i] != null && this.m_views[i].User.Name == user.Name) {
-                            views.length = views.length + 1;
-                            views[views.length] = this.m_views[i];
-                        }
-                    }
-
-                    return views;
-                };
-
                 ViewCollection.prototype.AddView = function (view) {
                     for (var i = 0; i < this.m_views.length; i++) {
                         if (this.m_views[i] == null) {
@@ -690,6 +708,7 @@ var CodeSoar;
             function EditorController() {
                 this.m_syncMode = false;
                 this.m_lastEdit = null;
+                this.m_cursor = new CodeSoar.Client.View.Cursor();
             }
             EditorController.prototype.Setup = function (session, editor) {
                 this.Session = session;
@@ -706,6 +725,8 @@ var CodeSoar;
                 console.log(SOCKET_HOST);
                 this.m_socket = io.connect(SOCKET_HOST);
 
+                this.m_cursor.Editor = this.Editor;
+
                 var self = this;
 
                 this.m_socket.on('join', function (data) {
@@ -715,8 +736,15 @@ var CodeSoar;
                 });
                 this.m_socket.on('user-joined', this.OnSocketJoined);
                 this.m_socket.on('user-left', this.OnSocketLeft);
-                this.m_socket.on('user-cursor-change', this.OnSocketCursorChange);
-                this.m_socket.on('user-selection-change', this.OnSocketSelectionChange);
+
+                this.m_socket.on('user-selection-change', function (data) {
+                    if (typeof data.s != 'undefined') {
+                    } else {
+                    }
+
+                    self.m_cursor.Update(data.c);
+                });
+
                 this.m_socket.on('user-message', this.OnSocketMessage);
                 this.m_socket.on('user-edit', function (data) {
                     var dataClone = clone(data);
@@ -748,8 +776,47 @@ var CodeSoar;
                 });
                 this.EditorSession.on('changeScrollTop', this.OnVerticalScroll);
                 this.EditorSession.on('changeScrollLeft', this.OnHorizontalScroll);
-                this.EditorSession.on('changeCursor', this.OnCursorChange);
-                this.EditorSession.on('changeSelection', this.OnSelectionChange);
+
+                setInterval(function () {
+                    var msg = {};
+
+                    var selection = self.EditorSession.selection;
+
+                    msg.s = [];
+                    if (selection.inMultiSelectMode) {
+                        for (var i = 0; i < selection.ranges.length; i++) {
+                            msg.s[i] = {
+                                s: {
+                                    c: selection.ranges[i].start.column,
+                                    r: selection.ranges[i].start.row
+                                },
+                                e: {
+                                    c: selection.ranges[i].end.column,
+                                    r: selection.ranges[i].end.row
+                                }
+                            };
+                        }
+                    } else {
+                        msg.s[0] = {
+                            s: {
+                                c: selection.anchor.column,
+                                r: selection.anchor.row
+                            },
+                            e: {
+                                c: selection.lead.column,
+                                r: selection.anchor.row
+                            }
+                        };
+                    }
+
+                    var cp = self.Editor.getCursorPosition();
+
+                    msg.c = {
+                        r: cp.row,
+                        c: cp.column
+                    };
+                    self.m_socket.emit('selection-change', msg);
+                }, 150);
 
                 document.addEventListener("EditorRedoEvent", this.OnRedo, false);
                 document.addEventListener("EditorUndoEvent", this.OnUndo, false);

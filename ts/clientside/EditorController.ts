@@ -63,6 +63,9 @@ export class EditorController {
 		console.log(SOCKET_HOST);
 		this.m_socket = io.connect(SOCKET_HOST);
 
+		//HACK, remove!
+		this.m_cursor.Editor = this.Editor;
+
 		var self = this;
 
 		//setup socket events.
@@ -77,8 +80,23 @@ export class EditorController {
 		});
 		this.m_socket.on('user-joined', this.OnSocketJoined);
 		this.m_socket.on('user-left', this.OnSocketLeft);
-		this.m_socket.on('user-cursor-change', this.OnSocketCursorChange);
-		this.m_socket.on('user-selection-change', this.OnSocketSelectionChange);
+	//	this.m_socket.on('user-cursor-change', this.OnSocketCursorChange);
+		
+		//Selection change
+		this.m_socket.on('user-selection-change', function(data) {
+			if (typeof data.s != 'undefined') {
+				//multiselect mode!
+
+
+
+			} else {
+
+			}
+
+			//display cursor
+			self.m_cursor.Update(data.c);
+		});
+
 		this.m_socket.on('user-message', this.OnSocketMessage);
 		this.m_socket.on('user-edit', function(data) {
 
@@ -98,17 +116,18 @@ export class EditorController {
 		});
 	//	this.m_socket.on('user-language-change', this.OnSocketLanguageChange);
 
+
+
+
+
+
 		//setup editor events.
 		this.EditorSession.on('change', function(data) {
 
 			if (data.data.ignore) {
-
-
-
 				return;
 			}
 			
-
 			var dataClone = clone(data);
 
 			console.log(dataClone);
@@ -124,8 +143,73 @@ export class EditorController {
 		});
 		this.EditorSession.on('changeScrollTop', this.OnVerticalScroll);
 		this.EditorSession.on('changeScrollLeft', this.OnHorizontalScroll);
-		this.EditorSession.on('changeCursor', this.OnCursorChange);
-		this.EditorSession.on('changeSelection', this.OnSelectionChange);
+	//	this.EditorSession.on('changeCursor', this.OnCursorChange);
+	//	this.EditorSession.selection.on('changeSelection', function(data) {
+		//	var selection = self.EditorSession.selection;
+	//		console.log(selection);
+	//	});
+
+		//every 150ms, send update about cursor position/selection
+		//This is incredibly butts.
+		setInterval(function() {
+			var msg : any = {};
+
+			//selection ranges
+			
+
+			var selection : any = self.EditorSession.selection;
+
+			msg.s = [];
+			if (selection.inMultiSelectMode) {
+				for (var i = 0; i < selection.ranges.length; i++) {
+					msg.s[i] = {
+						//start
+						s : {
+							//column
+							c : selection.ranges[i].start.column,
+							//row
+							r : selection.ranges[i].start.row
+						},
+						//end
+						e :{
+							//column
+							c : selection.ranges[i].end.column,
+							//row
+							r : selection.ranges[i].end.row
+						}
+
+					};
+				}
+			} else {
+
+				msg.s[0] = {
+					//start
+					s : {
+						//column
+						c : selection.anchor.column,
+						//row
+						r : selection.anchor.row
+					},
+					//end
+					e :{
+						//column
+						c : selection.lead.column,
+						//row
+						r : selection.anchor.row
+					}
+
+				};
+			}
+			//end of building selection ranges.
+			var cp = self.Editor.getCursorPosition();
+			//getCursorPosition.
+			msg.c = {
+				r: cp.row,
+				c: cp.column
+			};
+			self.m_socket.emit('selection-change', msg);
+
+		}, 150);
 
 
 		//Custom events
@@ -408,7 +492,8 @@ export class EditorController {
 //	private m_recentEdits : CodeSoar.Common.CircularStack<CodeSoar.Client.Edit>;
 //	private m_editBuffer : CodeSoar.Common.CircularStack<CodeSoar.Client.Edit>;
 	private m_socket : any;
-	private m_cursors : CodeSoar.Client.View.ViewCollection<CodeSoar.Client.View.Cursor>;
+	private m_cursor : CodeSoar.Client.View.Cursor = new CodeSoar.Client.View.Cursor();
+	//private m_cursors : CodeSoar.Client.View.ViewCollection<CodeSoar.Client.View.Cursor>;
 	private m_selections : CodeSoar.Client.View.ViewCollection<CodeSoar.Client.View.Selection>;
 	private m_activelines : CodeSoar.Client.View.ViewCollection<CodeSoar.Client.View.ActiveLine>;
 

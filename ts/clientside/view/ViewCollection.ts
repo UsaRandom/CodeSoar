@@ -8,7 +8,7 @@ module CodeSoar.Client.View {
 //TODO: Test the hell out of this.
 export class ViewCollection<T extends IView> {
 
-
+/*
 	public GetViewsByUser(user : CodeSoar.Common.User) : T[] {
 		
 		var views : T[] = new Array<T>(0);
@@ -27,7 +27,7 @@ export class ViewCollection<T extends IView> {
 
 		return views;
 	}
-
+*/
 
 	public AddView(view : T) : void {
 		

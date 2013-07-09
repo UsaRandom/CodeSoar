@@ -11,26 +11,31 @@ Selection
 /// <reference path="IView.ts"/>
 /// <reference path="../../common/User.ts"/>
 
+
 module CodeSoar.Client.View {
 
 
 export class Selection implements CodeSoar.Client.View.IView {
 
-	constructor () {
-
+	constructor (editor : any) {
+		this.Editor = editor;
 	}
 
 
 	public Update(data : any) : void {
+			
+		//DocPoint, DocPoint
 		
+
 	}
 
 	public Remove() : void {
-
+		
 	}
 
-	public User : CodeSoar.Common.User;
-	public BomID : string;
+
+	
+
 	public Editor : any;
 }
 }

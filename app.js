@@ -103,6 +103,7 @@ var CodeSoar;
     (function (Server) {
         var MessageRoom = (function () {
             function MessageRoom(docID, onEmpty) {
+                this.m_id = 0;
                 this.DocID = docID;
                 this.m_onEmpty = onEmpty;
             }
@@ -110,12 +111,15 @@ var CodeSoar;
                 var self = this;
 
                 socket.join(self.DocID);
+                socket.user = this.m_id++;
 
                 socket.on('cursor-change', function (data) {
                     socket.broadcast.to(self.DocID).emit('user-cursor-change', data);
                 });
 
                 socket.on('selection-change', function (data) {
+                    data.user = socket.user;
+
                     socket.broadcast.to(self.DocID).emit('user-selection-change', data);
                 });
 

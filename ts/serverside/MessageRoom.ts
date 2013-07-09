@@ -22,6 +22,7 @@ export class MessageRoom {
 		var self : any = this;
 
 		socket.join(self.DocID);
+		socket.user = this.m_id++;
 
 		//new socket is joining, setup other message handlers.
 
@@ -33,6 +34,8 @@ export class MessageRoom {
 
 	    //User's selection changed.
 	    socket.on('selection-change', function(data) {
+
+	    	data.user = socket.user;
 	    
 	    	socket.broadcast.to(self.DocID).emit('user-selection-change', data);
 	    });
@@ -102,6 +105,7 @@ export class MessageRoom {
 
 	}
 
+	private m_id : number = 0;
 
 	public DocID : string;
 
