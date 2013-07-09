@@ -23,7 +23,7 @@ export class Config {
 
 	static Get() : CodeSoar.Server.Config {
 		//switch this when moving to production.
-		return CodeSoar.Server.Config._DEV;
+		return CodeSoar.Server.Config._PROD;
 	}
 
 	//Variables used for configuration

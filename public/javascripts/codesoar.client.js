@@ -191,7 +191,6 @@ var CodeSoar;
 
                         if ($("#" + this.m_id + "_single").length == 0) {
                             $("#editor .ace_marker-layer:first").append('<div id="' + this.m_id + '_single"></div>');
-                            console.log("grr ");
                         }
 
                         $("#" + this.m_id + '_single').css({
