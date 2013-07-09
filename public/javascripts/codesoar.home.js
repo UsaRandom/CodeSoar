@@ -1,9 +1,5 @@
 
 
-$(document).ready(function(){
-    //Document Ready
-    //
-    //JS Magic
     var language = "javascript";
 
     var editor = ace.edit("editor_demo");
@@ -38,5 +34,3 @@ $(document).ready(function(){
     		});
     	}
     });
-
-});

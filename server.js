@@ -14,8 +14,8 @@ var mongo = require('mongodb');
 
 var Server = mongo.Server,
     Db = mongo.Db;
-var dbServer = new mongo.Server(process.env.OPENSHIFT_MONGODB_DB_HOST, parseInt(process.env.OPENSHIFT_MONGODB_DB_PORT));
-var db = new Db(process.env.OPENSHIFT_APP_NAME, dbServer, {auto_reconnect: true, w:1});
+var dbServer = new mongo.Server(/*process.env.OPENSHIFT_MONGODB_DB_HOST*/'localhost', parseInt(/*process.env.OPENSHIFT_MONGODB_DB_PORT*/27017));
+var db = new Db(/*process.env.OPENSHIFT_APP_NAME*/'codesoar', dbServer, {auto_reconnect: true, w:1});
  
 var app = express();
 var docs = {};
@@ -24,7 +24,7 @@ var changesDb ={};
 
 db.open(function(err, db){
       if(err){ throw err };
-      db.authenticate(process.env.OPENSHIFT_MONGODB_DB_USERNAME, process.env.OPENSHIFT_MONGODB_DB_PASSWORD,  function(err, res){
+      db.authenticate(/*process.env.OPENSHIFT_MONGODB_DB_USERNAME*/'dev', /*process.env.OPENSHIFT_MONGODB_DB_PASSWORD*/'pass',  function(err, res){
         if(err){ throw err };
       });
     });
@@ -105,8 +105,11 @@ app.get('/home', routes.home);
 app.get('/javascripts/:language/:document', function(req, res) {
     //req.params.language
     //req.params.document
+        console.log("about to call find for js");
         docs.find({docID: req.params.document}, function(err,docs) {
+                console.log("js find err :" + err);
         docs.each(function (err, doc) {
+                console.log("js each err:"+err);
                console.log(doc);
         if(!doc) {
             routes.fourOhFour(req, res);
@@ -128,15 +131,19 @@ app.post("/create", function(req, res) {
     //req.body.language
 
     var newDocID = '';
-
+    console.log("creating");
     do
     {
         newDocID = generateDocID(20);
+        console.log("about to call find");
+    }while(docs.find({docID: newDocID}).count(function(e, cnt) { return cnt; }) > 0);
 
-    }while(db.collection('docs').find({docID: newDocID}).count() > 0);
 
-    db.collection('docs').insert({docID: newDocID, sourcecode: req.body.src, language: req.body.language}, {w:0});
 
+    console.log("about to call insert");
+    docs.insert({docID: newDocID, sourcecode: req.body.src, language: req.body.language}, {safe: true}, function(err, records){
+    console.log("Record added as "+records[0]._id);
+});
     res.send(newDocID);
 
 });
@@ -145,6 +152,7 @@ app.get('/view/:document', function(req, res) {
     
     docs.find({docID: req.params.document}, function(err,documents) {
         documents.each(function (err, doc) {
+            console.log("Load doc err: "+err);
                console.log(doc);
         if(!doc) {
             routes.fourOhFour(req, res);
@@ -168,7 +176,7 @@ app.use(function(req, res, next){
 // Our express application functions as our main listener for HTTP requests
 // in this example which is why we don't just invoke listen on the app object.
 server = require('http').createServer(app);
-server.listen(process.env.OPENSHIFT_INTERNAL_PORT  || 8080, process.env.OPENSHIFT_INTERNAL_IP);
+server.listen(/*process.env.OPENSHIFT_INTERNAL_PORT*/80  || 8080, /*process.env.OPENSHIFT_INTERNAL_IP*/'127.0.0.1');
 
 
 // socket.io augments our existing HTTP server instance.
@@ -248,8 +256,9 @@ io.sockets.on('connection', function (socket) {
             controllingUser = user.getNick();
         }
         socket.join(data.room);
-
+        console.log("about to call find!");
         changesDb.find({docID: data.room}, function(err,changesMade) {
+            console.log("first: " +err);
             changesMade.each(function (err2, change) {
                     if(change)
                          {

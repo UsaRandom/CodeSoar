@@ -1,4 +1,6 @@
 
+
+//NOTE: Some of these objects have changed....
 ---------CodeClient-------------
 
 
@@ -127,7 +129,11 @@ ServerClient
 
 
 
+MONGO DB Stuff
 
+sudo /etc/init.d/mongodb stop
+sudo /etc/init.d/mongodb start
+sudo /etc/init.d/mongodb restart
 
 
 
@@ -197,6 +203,8 @@ Each line is 15px tall so 'height' is 15px, 'top' is set to 15px * (LineNumber-1
 
 To fetch where they are scrolled to use 'editor.getSession().$scrollTop', this will return the padding in number of pixels. IT IS NOT always divisible by 15px.
 
+//NEW NOTE: Also adjust for 'editor.getSession().$scrollLeft' in the same way as $scrollTop
+
 You will need to compare against code folds. This is best done by comparing the result of 'editor.getSession().documentToScreenPosition(Range.start.Row, Range.start.Col)' to 'Range.Start'. Obviously comparing the end as well.
 
 ----------------------------------------
@@ -263,3 +271,584 @@ border-right: 1px solid;
 Under ace_marker-layer
 
 <div class="ace_bracket ace_start" style="height:15px;width:6px;top:150px;left:148px;"></div>
+
+
+
+
+
+
+
+
+
+
+
+//
+//
+//
+// Editor Events
+//
+//
+//
+
+
+///
+///
+/// On Document Change Event/Function
+///
+///
+
+editor.getSession().on('change', function(e) {
+	
+
+	//e.data holds the delta object...
+
+	//examples below, these are RAW definitions, not everything
+	//is nessisarly needed(?)
+
+
+});
+
+//
+//
+// On Document Change Event Definitions
+//
+//
+
+//'removeText' Definition
+data: {
+	action: "removeText",
+	range:  { 
+		end : {
+			column: 0,
+			row: 4,
+		},
+		start: {
+			column: 25,
+			row: 3
+		}
+	},
+	text: ";"
+}
+
+//'includeText' Definition
+data: {
+	action: "includeText",
+	range:  { 
+		end : {
+			column: 0,
+			row: 4,
+		},
+		start: {
+			column: 25,
+			row: 3
+		}
+	},
+	text: ";"
+}
+
+
+
+//'removeLines' Definition
+data: {
+	action: "removeLines",
+	lines: [
+		0: "    var resultString = "Hello, ACE! The result of your math is: ";"
+		1: "    var result = x + y;"
+		2: "    return resultString + result;"
+		3: "}"
+		4: ""
+		5: "    return resultString + result;"
+		6: "}"
+		7: "var addResult = add(3, 2);"
+		8: "console.log(addResult);"
+	],
+	range:  { 
+		end : {
+			column: 0,
+			row: 19,
+		},
+		start: {
+			column: 1,
+			row: 10
+		}
+	},
+	nl: "↵"
+}
+
+
+//'insertLines' Definition
+data: {
+	action: "insertLines",
+	lines: [
+		0: "    var resultString = "Hello, ACE! The result of your math is: ";"
+		1: "    var result = x + y;"
+		2: "    return resultString + result;"
+		3: "}"
+		4: ""
+		5: "    return resultString + result;"
+		6: "}"
+		7: "var addResult = add(3, 2);"
+		8: "console.log(addResult);"
+	],
+	range:  { 
+		end : {
+			column: 0,
+			row: 19,
+		},
+		start: {
+			column: 1,
+			row: 10
+		}
+	}
+}
+
+
+
+
+
+//
+//
+// On Virtical Scroll Change Event
+//
+//
+editor.getSession().on('changeScrollTop', function(scrollTop) {
+	
+	//scrollTop is equal to the number of pixels that offset the top of the code
+	//document, and the top of the document view.
+	//
+	//We need to update where other users cursors/selections/etc display on the document
+	//and how they display as they may have gone out of view.
+
+});
+
+
+
+//
+//
+// On Horizontal Scroll Change Event
+//
+//
+editor.getSession().on('changeScrollLeft', function(scrollLeft) {
+	
+	//scrollLeft is equal to the number of pixels that offset the left of the code
+	//document, and the left of the document view.
+	//
+	//We need to update where other users cursors/selections/etc display on the document
+	//and how they display as they may have gone out of view.
+
+});
+
+
+
+
+
+//
+//
+// On Cursor Change Event [ActiveLine]
+//
+//
+editor.getSession().selection.on("changeCursor", function() {
+	var cursorPos = editor.getSession().getCursor();
+	console.log(cursorPos);
+	//prints
+	//Object {row: 12, column: 0}
+});
+
+
+//
+//
+// On Selection Change Event
+//
+//
+editor.getSession().selection.on('changeSelection', function() {
+	
+	var selection = editor.getSession().selection;
+
+
+
+	if (selection.inMultiSelectMode) {
+		//check if we have multiple selection ranges
+
+		//loop through the selection.ranges array.
+
+		//selectionRange object def
+		//
+		/*
+
+			[0] : {
+				cursor: {
+					column: 19,
+					row: 3
+				},
+				end: {
+					column: 3,
+					row: 5
+				},
+				start: {
+					column: 19,
+					row: 3
+				}
+			},
+			[1] ....
+
+
+		*/
+
+		//Send off multi selection message
+
+		return;
+	}
+
+	//Not in multi select
+
+	var startPos = { column: selection.anchor.column, row: selection.anchor.row};
+	var endPos = { column : selection.lead.column, row: selection.lead.row};
+
+	//send of new selection message.
+
+
+});
+
+
+
+
+//
+//
+//
+// UNDO MANAGER [important because we don't want to undo someone elses changes]
+//
+//
+//
+
+
+/////////////////////////////////
+
+
+
+SCRATCH ALL OF THAT HACKING BS, Just edit Ace, and rebuild it.
+NOTE: Rebuilding breaks, the latest code off of github blows chunks... Just edited
+      the non minified source of a stable build.
+
+
+
+Done.
+
+
+Here is this for undo/redo events...
+
+
+            //send off undo event.
+            var evt = document.createEvent("Event");
+            evt.initEvent("EditorUndoEvent", true, true);
+            evt.deltas = deltas;
+            document.dispatchEvent(evt);
+
+
+/////////////
+
+editor.getSession().$undoManager //getUndoManager()
+
+$doc: 
+$redoStack: Array[0]
+$undoStack: Array[1]
+dirtyCounter: 1
+constructor: function (){this.reset()}
+execute: function (e){var t=e.args[0];this.$doc=e.args[1],this.$undoStack.push(t),this.$redoStack=[],this.dirtyCounter<0&&(this.dirtyCounter=NaN),this.dirtyCounter++}
+hasRedo: function (){return this.$redoStack.length>0}
+hasUndo: function (){return this.$undoStack.length>0}
+isClean: function (){return this.dirtyCounter===0}
+markClean: function (){this.dirtyCounter=0}
+redo: function (e){var t=this.$redoStack.pop(),n=null;return t&&(n=this.$doc.redoChanges(t,e),this.$undoStack.push(t),this.dirtyCounter++),n}
+reset: function (){this.$undoStack=[],this.$redoStack=[],this.dirtyCounter=0}
+undo: function (e){var t=this.$undoStack.pop(),n=null;return t&&(n=this.$doc.undoChanges(t,e),this.$redoStack.push(t),this.dirtyCounter--),n}
+
+
+
+
+//Doc.ApplyDeltas
+function (e){for(var t=0;t<e.length;t++){
+var n=e[t],r=s.fromPoints(n.range.start,n.range.end);
+n.action=="insertLines"?this.insertLines(r.start.row,n.lines):n.action=="insertText"?this.insert(r.start,n.text):n.action=="removeLines"?this._removeLines(r.start.row,r.end.row-1):n.action=="removeText"&&this.remove(r)
+}}
+
+
+//
+// Replacing these with something that doesn't emit the 'change' event when we want it, or emits it with extra data attached would be useful.
+//
+
+
+
+//
+//
+//All Doc Methods...
+//
+//
+_emit: function (e,t){this._eventRegistry||(this._eventRegistry={}),this._defaultHandlers||(this._defaultHandlers={});var n=this._eventRegistry[e]||[],r=this._defaultHandlers[e];if(!n.length&&!r)return;if(typeof t!="object"||!t)t={};t.type||(t.type=e),t.stopPropagation||(t.stopPropagation=i),t.preventDefault||(t.preventDefault=s);for(var o=0;o<n.length;o++){n[o](t,this);if(t.propagationStopped)break}if(r&&!t.defaultPrevented)return r(t,this)}
+
+
+_insertLines: function (e,t){if(t.length==0)return{row:e,column:0};if(t.length>65535){var n=this._insertLines(e,t.slice(65535));t=t.slice(0,65535)}var r=[e,0];r.push.apply(r,t),this.$lines.splice.apply(this.$lines,r);var i=new s(e,0,e+t.length,0),o={action:"insertLines",range:i,lines:t};return this._emit("change",{data:o}),n||i.end}
+_removeLines: function (e,t){var n=new s(e,0,t+1,0),r=this.$lines.splice(e,t-e+1),i={action:"removeLines",range:n,nl:this.getNewLineCharacter(),lines:r};return this._emit("change",{data:i}),r}
+
+applyDeltas: function (e){for(var t=0;t<e.length;t++){var n=e[t],r=s.fromPoints(n.range.start,n.range.end);n.action=="insertLines"?this.insertLines(r.start.row,n.lines):n.action=="insertText"?this.insert(r.start,n.text):n.action=="removeLines"?this._removeLines(r.start.row,r.end.row-1):n.action=="removeText"&&this.remove(r)}}
+
+
+insert: function (e,t){if(!t||t.length===0)return e;e=this.$clipPosition(e),this.getLength()<=1&&this.$detectNewLine(t);var n=this.$split(t),r=n.splice(0,1)[0],i=n.length==0?null:n.splice(n.length-1,1)[0];return e=this.insertInLine(e,r),i!==null&&(e=this.insertNewLine(e),e=this._insertLines(e.row,n),e=this.insertInLine(e,i||"")),e}
+
+insertInLine: function (e,t){if(t.length==0)return e;var n=this.$lines[e.row]||"";this.$lines[e.row]=n.substring(0,e.column)+t+n.substring(e.column);var r={row:e.row,column:e.column+t.length},i={action:"insertText",range:s.fromPoints(e,r),text:t};return this._emit("change",{data:i}),r}
+
+insertLines: function (e,t){return e>=this.getLength()?this.insert({row:e,column:0},"\n"+t.join("\n")):this._insertLines(Math.max(e,0),t)}
+
+insertNewLine: function (e){e=this.$clipPosition(e);var t=this.$lines[e.row]||"";this.$lines[e.row]=t.substring(0,e.column),this.$lines.splice(e.row+1,0,t.substring(e.column,t.length));var n={row:e.row+1,column:0},r={action:"insertText",range:s.fromPoints(e,n),text:this.getNewLineCharacter()};return this._emit("change",{data:r}),n}
+
+remove: function (e){e.start=this.$clipPosition(e.start),e.end=this.$clipPosition(e.end);if(e.isEmpty())return e.start;var t=e.start.row,n=e.end.row;if(e.isMultiLine()){var r=e.start.column==0?t:t+1,i=n-1;e.end.column>0&&this.removeInLine(n,0,e.end.column),i>=r&&this._removeLines(r,i),r!=t&&(this.removeInLine(t,e.start.column,this.getLine(t).length),this.removeNewLine(e.start.row))}else this.removeInLine(t,e.start.column,e.end.column);return e.start}
+
+removeInLine: function (e,t,n){if(t==n)return;var r=new s(e,t,e,n),i=this.getLine(e),o=i.substring(t,n),u=i.substring(0,t)+i.substring(n,i.length);this.$lines.splice(e,1,u);var a={action:"removeText",range:r,text:o};return this._emit("change",{data:a}),r.start}
+
+removeLines: function (e,t){return e<0||t>=this.getLength()?this.remove(new s(e,0,t+1,0)):this._removeLines(e,t)}
+
+removeNewLine: function (e){var t=this.getLine(e),n=this.getLine(e+1),r=new s(e,t.length,e+1,0),i=t+n;this.$lines.splice(e,2,i);var o={action:"removeText",range:r,text:this.getNewLineCharacter()};this._emit("change",{data:o})}
+
+revertDeltas: function (e){for(var t=e.length-1;t>=0;t--){var n=e[t],r=s.fromPoints(n.range.start,n.range.end);n.action=="insertLines"?this._removeLines(r.start.row,r.end.row-1):n.action=="insertText"?this.remove(r):n.action=="removeLines"?this._insertLines(r.start.row,n.lines):n.action=="removeText"&&this.insert(r.start,n.text)}}
+
+
+
+/// All of those ^^^^^^^^^^^^  But with the addition of applyDeltas(deltas, true), revertDeltas (deltas, true) overrides to allow
+/// certain 'change' emits to have an 'ignore' data attribute.
+
+
+
+editor.getSession().doc.__proto__._insertLines = function (e, t, c) {
+    if (t.length == 0) return {
+        row: e,
+        column: 0
+    };
+    var n;
+    if (t.length > 65535) {
+      	if (arguments.length != 3) {
+        n = this._insertLines(e, t.slice(65535));
+        } else {
+        n = this._insertLines(e, t.slice(65535), c);
+        }
+      
+        t = t.slice(0, 65535)
+    }
+    var r = [e, 0];
+    r.push.apply(r, t), this.$lines.splice.apply(this.$lines, r);
+    var i = new s(e, 0, e + t.length, 0),
+        o = {
+            action: "insertLines",
+            range: i,
+            lines: t
+        };
+  if (arguments.length != 3) {
+    return this._emit("change", {
+        data: o
+    }), n || i.end
+  } else {
+    return this._emit("change", {
+        data: o,
+      ignore: c
+    }), n || i.end
+  }
+};
+editor.getSession().doc.__proto__._removeLines = function (e, t, c) {
+    var n = new s(e, 0, t + 1, 0),
+        r = this.$lines.splice(e, t - e + 1),
+        i = {
+            action: "removeLines",
+            range: n,
+            nl: this.getNewLineCharacter(),
+            lines: r
+        };
+    if (arguments.length != 3) {
+    return this._emit("change", {
+        data: i
+    }), r
+    } else {
+      return this._emit("change", {
+        data: i,
+        ignore: c
+    }), r
+    }
+};
+editor.getSession().doc.__proto__.applyDeltas = function (e, c) {
+  	if (arguments.length != 2) {
+    for (var t = 0; t < e.length; t++) {
+        var n = e[t],
+            r = s.fromPoints(n.range.start, n.range.end);
+        n.action == "insertLines" ? this.insertLines(r.start.row, n.lines) : n.action == "insertText" ? this.insert(r.start, n.text) : n.action == "removeLines" ? this._removeLines(r.start.row, r.end.row - 1) : n.action == "removeText" && this.remove(r)
+    }
+    }
+  else {
+        for (var t = 0; t < e.length; t++) {
+        var n = e[t],
+            r = s.fromPoints(n.range.start, n.range.end);
+        n.action == "insertLines" ? this.insertLines(r.start.row, n.lines, c) : n.action == "insertText" ? this.insert(r.start, n.text, c) : n.action == "removeLines" ? this._removeLines(r.start.row, r.end.row - 1, c) : n.action == "removeText" && this.remove(r, c)
+    }
+  }
+};
+editor.getSession().doc.__proto__.insert = function (e, t, c) {
+    if (!t || t.length === 0) return e;
+    e = this.$clipPosition(e), this.getLength() <= 1 && this.$detectNewLine(t);
+    var n = this.$split(t),
+        r = n.splice(0, 1)[0],
+        i = n.length == 0 ? null : n.splice(n.length - 1, 1)[0];
+  if (arguments.length != 3) {
+    return e = this.insertInLine(e, r), i !== null && (e = this.insertNewLine(e), e = this._insertLines(e.row, n), e = this.insertInLine(e, i || "")), e
+  }
+  else {
+    return e = this.insertInLine(e, r, c), i !== null && (e = this.insertNewLine(e, c), e = this._insertLines(e.row, n, c), e = this.insertInLine(e, i || "", c)), e
+  
+  }
+};
+editor.getSession().doc.__proto__.insertInLine = function (e, t, c) {
+    if (t.length == 0) return e;
+    var n = this.$lines[e.row] || "";
+    this.$lines[e.row] = n.substring(0, e.column) + t + n.substring(e.column);
+    var r = {
+        row: e.row,
+        column: e.column + t.length
+    }, i = {
+            action: "insertText",
+            range: s.fromPoints(e, r),
+            text: t
+        };
+  if (arguments.length != 3) {
+    return this._emit("change", {
+        data: i
+    }), r
+  } else {
+    return this._emit("change", {
+        data: i,
+      ignore: true
+    }), r
+  }
+};
+editor.getSession().doc.__proto__.insertLines = function (e, t, c) {
+  if (arguments.length != 3) {
+    return e >= this.getLength() ? this.insert({
+        row: e,
+        column: 0
+    }, "\n" + t.join("\n")) : this._insertLines(Math.max(e, 0), t)
+  } else {
+    return e >= this.getLength() ? this.insert({
+        row: e,
+        column: 0
+    }, "\n" + t.join("\n"), c) : this._insertLines(Math.max(e, 0), t, c)
+  }
+};
+editor.getSession().doc.__proto__.insertNewLine = function (e, c) {
+    e = this.$clipPosition(e);
+    var t = this.$lines[e.row] || "";
+    this.$lines[e.row] = t.substring(0, e.column), this.$lines.splice(e.row + 1, 0, t.substring(e.column, t.length));
+    var n = {
+        row: e.row + 1,
+        column: 0
+    }, r = {
+            action: "insertText",
+            range: s.fromPoints(e, n),
+            text: this.getNewLineCharacter()
+        };
+  if (arguments.length != 2) {
+    return this._emit("change", {
+        data: r
+    }), n
+  } else {
+    return this._emit("change", {
+        data: r,
+      ignore : c
+    }), n
+  }
+};
+editor.getSession().doc.__proto__.remove = function (e, c) {
+    e.start = this.$clipPosition(e.start), e.end = this.$clipPosition(e.end);
+    if (e.isEmpty()) return e.start;
+    var t = e.start.row,
+        n = e.end.row;
+  if (arguments.length != 2) {
+    if (e.isMultiLine()) {
+        var r = e.start.column == 0 ? t : t + 1,
+            i = n - 1;
+        e.end.column > 0 && this.removeInLine(n, 0, e.end.column), i >= r && this._removeLines(r, i), r != t && (this.removeInLine(t, e.start.column, this.getLine(t).length), this.removeNewLine(e.start.row))
+    } else this.removeInLine(t, e.start.column, e.end.column);
+  } else {
+        if (e.isMultiLine()) {
+        var r = e.start.column == 0 ? t : t + 1,
+            i = n - 1;
+        e.end.column > 0 && this.removeInLine(n, 0, e.end.column, c), i >= r && this._removeLines(r, i, c), r != t && (this.removeInLine(t, e.start.column, this.getLine(t).length, c), this.removeNewLine(e.start.row, c))
+    } else this.removeInLine(t, e.start.column, e.end.column, c);
+  }
+    return e.start
+};
+editor.getSession().doc.__proto__.removeInLine = function (e, t, n, c) {
+    if (t == n) return;
+    var r = new s(e, t, e, n),
+        i = this.getLine(e),
+        o = i.substring(t, n),
+        u = i.substring(0, t) + i.substring(n, i.length);
+    this.$lines.splice(e, 1, u);
+    var a = {
+        action: "removeText",
+        range: r,
+        text: o
+    };
+  if (arguments.length != 4) {
+    return this._emit("change", {
+        data: a
+    }), r.start
+  } else {
+        return this._emit("change", {
+        data: a,
+          ignore: true
+    }), r.start
+  }
+};
+editor.getSession().doc.__proto__.removeLines = function (e, t, c) {
+  if (arguments.length != 3) {
+    return e < 0 || t >= this.getLength() ? this.remove(new s(e, 0, t + 1, 0)) : this._removeLines(e, t)
+  } else {
+    return e < 0 || t >= this.getLength() ? this.remove(new s(e, 0, t + 1, 0), c) : this._removeLines(e, t, c)
+  }
+};
+editor.getSession().doc.__proto__.removeNewLine = function (e, c) {
+    var t = this.getLine(e),
+        n = this.getLine(e + 1),
+        r = new s(e, t.length, e + 1, 0),
+        i = t + n;
+    this.$lines.splice(e, 2, i);
+    var o = {
+        action: "removeText",
+        range: r,
+        text: this.getNewLineCharacter()
+    };
+  if(arguments.length != 2) {
+    
+    this._emit("change", {
+        data: o
+    })
+    
+  } else {
+     
+    this._emit("change", {
+        data: o,
+      ignore: true
+    })
+   	 
+  }
+};
+editor.getSession().doc.__proto__.revertDeltas = function (e, c) {
+  if (arguments.length != 2) {
+    for (var t = e.length - 1; t >= 0; t--) {
+        var n = e[t],
+            r = s.fromPoints(n.range.start, n.range.end);
+        n.action == "insertLines" ? this._removeLines(r.start.row, r.end.row - 1) : n.action == "insertText" ? this.remove(r) : n.action == "removeLines" ? this._insertLines(r.start.row, n.lines) : n.action == "removeText" && this.insert(r.start, n.text)
+    }
+  } else {
+       for (var t = e.length - 1; t >= 0; t--) {
+        var n = e[t],
+            r = s.fromPoints(n.range.start, n.range.end);
+        n.action == "insertLines" ? this._removeLines(r.start.row, r.end.row - 1, c) : n.action == "insertText" ? this.remove(r, c) : n.action == "removeLines" ? this._insertLines(r.start.row, n.lines, c) : n.action == "removeText" && this.insert(r.start, n.text,c)
+    } 
+    
+  }
+};

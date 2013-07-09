@@ -7,6 +7,13 @@ block css
 block append scripts
 	script(type='text/javascript', src='/javascripts/ace.js', charset='utf-8')
 	script(type='text/javascript', src='/socket.io/socket.io.js', charset='utf-8')
+	script(type='text/javascript', src='/javascripts/codesoar.client.js', charset='utf-8')
+	script
+		$(document).ready(function () {
+		jQuery.fx.off = true;
+		CodeSoarClient.Init("#{docid}", "#{language}", { SOCKET_HOST: "#{SOCKET_HOST}"});
+		});
+
 
 block body
 	div#displayNameModal.modal.hide.fade(tabindex='-1', role='dialog', aria-labelledby='displayNameModalLabel', aria-hidden='true')
@@ -38,4 +45,3 @@ block body
 				ul#chatMsgs
 				div#bottomOfMsgs
 		input#chatText.span2(type='text', placeholder='Enter message here...')
-	script(type='text/javascript', src='/javascripts/#{language}/#{docid}')

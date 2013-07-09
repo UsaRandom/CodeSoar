@@ -31,6 +31,18 @@
 	ga('send', 'pageview');
 	</script>
 
+	<script>
+
+		$(document).ready(function () {
+
+		  jQuery.fx.off = true;
+
+		  CodeSoarClient.Init("docid","language", { SOCKET_HOST: "socketiohostfromconfig"});
+
+		});
+
+	</script>
+
 </head>
 <body>
 

@@ -10,23 +10,24 @@ Cursor
 
 */
 
+/// <reference path="IView.ts"/>
 /// <reference path="../../common/User.ts"/>
 
 module CodeSoar.Client.View {
 
 
-export class Cursor {
+export class Cursor implements CodeSoar.Client.View.IView {
 
 	constructor () {
 
 	}
 
 
-	update() {
+	public Update(data : any) : void {
 
 	}
 
-	remove() {
+	public Remove() : void {
 
 	}
 

@@ -6,6 +6,9 @@ IExeClient
  -setAutoExe
  -execute
 
+This exists so we can have different execution clients for different langauges, or multiple
+execution clients for the same language.
+
 */
 
 
