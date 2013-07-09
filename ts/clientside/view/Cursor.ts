@@ -23,7 +23,7 @@ export class Cursor implements CodeSoar.Client.View.IView {
 	}
 
 
-	public Update(data : any) : void {
+	public Update(data? : any) : void {
 
 		if (typeof data != 'undefined') {
 			this.row = data.r;

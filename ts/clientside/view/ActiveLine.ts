@@ -21,7 +21,7 @@ export class ActiveLine implements CodeSoar.Client.View.IView {
 	}
 
 
-	public Update(data : any) : void {
+	public Update(data? : any) : void {
 
 	}
 

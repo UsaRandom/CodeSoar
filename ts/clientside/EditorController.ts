@@ -65,6 +65,9 @@ export class EditorController {
 
 		//HACK, remove!
 		this.m_cursor.Editor = this.Editor;
+		this.m_selection.Editor = this.Editor;
+
+
 
 		var self = this;
 
@@ -84,17 +87,11 @@ export class EditorController {
 		
 		//Selection change
 		this.m_socket.on('user-selection-change', function(data) {
-			if (typeof data.s != 'undefined') {
-				//multiselect mode!
-
-
-
-			} else {
-
-			}
+			
 
 			//display cursor
 			self.m_cursor.Update(data.c);
+			self.m_selection.Update(data.s[0]);
 		});
 
 		this.m_socket.on('user-message', this.OnSocketMessage);
@@ -144,10 +141,10 @@ export class EditorController {
 		this.EditorSession.on('changeScrollTop', this.OnVerticalScroll);
 		this.EditorSession.on('changeScrollLeft', this.OnHorizontalScroll);
 	//	this.EditorSession.on('changeCursor', this.OnCursorChange);
-	//	this.EditorSession.selection.on('changeSelection', function(data) {
-		//	var selection = self.EditorSession.selection;
-	//		console.log(selection);
-	//	});
+		this.EditorSession.selection.on('changeSelection', function(data) {
+		    self.m_cursor.Update();
+			self.m_selection.Update();
+		});
 
 		//every 150ms, send update about cursor position/selection
 		//This is incredibly butts.
@@ -493,6 +490,7 @@ export class EditorController {
 //	private m_editBuffer : CodeSoar.Common.CircularStack<CodeSoar.Client.Edit>;
 	private m_socket : any;
 	private m_cursor : CodeSoar.Client.View.Cursor = new CodeSoar.Client.View.Cursor();
+	private m_selection : CodeSoar.Client.View.Selection = new CodeSoar.Client.View.Selection();
 	//private m_cursors : CodeSoar.Client.View.ViewCollection<CodeSoar.Client.View.Cursor>;
 	private m_selections : CodeSoar.Client.View.ViewCollection<CodeSoar.Client.View.Selection>;
 	private m_activelines : CodeSoar.Client.View.ViewCollection<CodeSoar.Client.View.ActiveLine>;

@@ -165,14 +165,51 @@ var CodeSoar;
     (function (Client) {
         (function (View) {
             var Selection = (function () {
-                function Selection(editor) {
-                    this.Editor = editor;
+                function Selection() {
+                    this.m_id = CodeSoar.Client.View.Selection.id++;
                 }
                 Selection.prototype.Update = function (data) {
+                    if (typeof data != 'undefined') {
+                        this.startRow = data.s.r;
+                        this.startCol = data.s.c;
+                        this.endRow = data.e.r;
+                        this.endCol = data.e.c;
+                    }
+
+                    this.Paint();
+                };
+
+                Selection.prototype.Paint = function () {
+                    var startPos = this.Editor.getSession().documentToScreenPosition(this.startRow, this.startCol);
+                    var endPos = this.Editor.getSession().documentToScreenPosition(this.endRow, this.endCol);
+
+                    if (startPos.row != endPos.row) {
+                    } else {
+                        if (startPos.column == endPos.column) {
+                            return;
+                        }
+
+                        if ($("#" + this.m_id + "_single").length == 0) {
+                            $("#editor .ace_marker-layer:first").append('<div id="' + this.m_id + '_single"></div>');
+                            console.log("grr ");
+                        }
+
+                        $("#" + this.m_id + '_single').css({
+                            'height': '15px',
+                            'top': 15 * (startPos.row) + 'px',
+                            'left': 4 + (6 * Math.min(startPos.column, endPos.column)) + 'px',
+                            'width': 6 * Math.abs(startPos.column - endPos.column) + 'px',
+                            'z-index': 5,
+                            'position': 'absolute',
+                            'background': 'rgb(241, 199, 179)'
+                        });
+                    }
                 };
 
                 Selection.prototype.Remove = function () {
                 };
+
+                Selection.id = 0;
                 return Selection;
             })();
             View.Selection = Selection;
@@ -709,6 +746,7 @@ var CodeSoar;
                 this.m_syncMode = false;
                 this.m_lastEdit = null;
                 this.m_cursor = new CodeSoar.Client.View.Cursor();
+                this.m_selection = new CodeSoar.Client.View.Selection();
             }
             EditorController.prototype.Setup = function (session, editor) {
                 this.Session = session;
@@ -726,6 +764,7 @@ var CodeSoar;
                 this.m_socket = io.connect(SOCKET_HOST);
 
                 this.m_cursor.Editor = this.Editor;
+                this.m_selection.Editor = this.Editor;
 
                 var self = this;
 
@@ -738,11 +777,8 @@ var CodeSoar;
                 this.m_socket.on('user-left', this.OnSocketLeft);
 
                 this.m_socket.on('user-selection-change', function (data) {
-                    if (typeof data.s != 'undefined') {
-                    } else {
-                    }
-
                     self.m_cursor.Update(data.c);
+                    self.m_selection.Update(data.s[0]);
                 });
 
                 this.m_socket.on('user-message', this.OnSocketMessage);
@@ -776,6 +812,11 @@ var CodeSoar;
                 });
                 this.EditorSession.on('changeScrollTop', this.OnVerticalScroll);
                 this.EditorSession.on('changeScrollLeft', this.OnHorizontalScroll);
+
+                this.EditorSession.selection.on('changeSelection', function (data) {
+                    self.m_cursor.Update();
+                    self.m_selection.Update();
+                });
 
                 setInterval(function () {
                     var msg = {};

@@ -210,6 +210,11 @@ You will need to compare against code folds. This is best done by comparing the 
 ----------------------------------------
 
 
+///
+// To fix flickering, create a second 'ace_marker-layer' above the text-later and the current ace_marker-layer. This will ensure other cursors and highlights go over our own, if we want to invert who is over who, we have to add a layer between the current marker-layer and the text layer. UGH, what fun :)
+///
+
+
 
 //Cursor
 
@@ -256,7 +261,7 @@ border-right: 1px solid;
 The middle requires this css:
 
 z-index: 0; //required for correct border overlap
-border: 1px solid;
+border: 1px solidco;
 
 
 The bottom requires this css:
