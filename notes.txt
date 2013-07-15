@@ -194,6 +194,20 @@ function reloadExe() {
 //
 
 
+
+		//Add above selection layer
+		$('<div class="ace_layer" id="codesoar_marker-layer-above"></div>').insertBefore('.ace_marker-layer:first');
+		
+		//Add below selection layer
+		$('<div class="ace_layer" id="codesoar_marker-layer-below"></div>').insertAfter('.ace_marker-layer:first');
+
+		//Add codesoar cursor layer
+		$('<div class="ace_layer" style="z-index: 4;" id="codesoar_cursor-layer"></div>').insertAfter('.ace_cursor-layer');
+
+
+
+
+
 NOTE: Code folding is an added annoyance, same with scrolling. 
 
 Fix:

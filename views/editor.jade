@@ -10,8 +10,8 @@ block append scripts
 	script(type='text/javascript', src='/javascripts/codesoar.client.js', charset='utf-8')
 	script
 		$(document).ready(function () {
-		jQuery.fx.off = true;
-		CodeSoarClient.Init("#{docid}", "#{language}", { SOCKET_HOST: "#{SOCKET_HOST}"});
+			jQuery.fx.off = true;
+			CodeSoarClient.Init("#{docid}", "#{language}", { SOCKET_HOST: "#{SOCKET_HOST}"});
 		});
 
 
@@ -31,9 +31,13 @@ block body
 
 	div#right-col
 		div#controls
-			button#requestCtrlBtn.btn.btn-mini.btn-primary.disabled(type='button')
-				i.icon-edit
-				|  Request Control
+			button#executeBtn.btn.btn-mini.btn-primary.disabled(type='button')
+				i.icon-play
+				|  Run
+			div.pull-right
+				div.btn-group.pull-right(data-toggle='buttons-radio', style="padding-right: 10px")
+					button#lightBtn.btn.btn-mini.btn-info.active Light
+					button#darkBtn.btn.btn-mini.btn-inverse Dark
 		div#users
 			ul
 		div#chatContainer

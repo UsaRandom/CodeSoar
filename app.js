@@ -32,10 +32,18 @@ var CodeSoar;
     (function (Common) {
         var User = (function () {
             function User() {
+                this.uId = 0;
                 this.Name = "Anonymous";
-                this.SelectionData = null;
-                this.CursorData = null;
+                this.Selection = null;
+                this.Cursor = null;
             }
+            User.Compare = function (a, b) {
+                if (typeof a == 'undefined' || typeof b == 'undefined' || a == null || b == null) {
+                    return false;
+                }
+
+                return a.uId == b.uId;
+            };
             return User;
         })();
         Common.User = User;
@@ -100,6 +108,86 @@ var CodeSoar;
 })(CodeSoar || (CodeSoar = {}));
 var CodeSoar;
 (function (CodeSoar) {
+    (function (Common) {
+        var Util = (function () {
+            function Util() {
+            }
+            Util.GetTimestamp = function () {
+                var d = new Date();
+                return d.getTime() + (d.getTimezoneOffset() * 60000);
+            };
+
+            Util.MixColors = function (firstColor, secondColor) {
+                var result = 0;
+
+                result = Math.floor(0.5 * ((firstColor & 0x00FF0000) >>> 16) + 0.5 * ((secondColor & 0x00FF0000) >>> 16)) << 16;
+
+                result += Math.floor(0.5 * ((firstColor & 0x0000FF00) >>> 8) + 0.5 * ((secondColor & 0x0000FF00) >>> 8)) << 8;
+
+                result += Math.floor(0.5 * (firstColor & 0x000000FF) + 0.5 * (secondColor & 0x000000FF));
+
+                return result;
+            };
+            return Util;
+        })();
+        Common.Util = Util;
+    })(CodeSoar.Common || (CodeSoar.Common = {}));
+    var Common = CodeSoar.Common;
+})(CodeSoar || (CodeSoar = {}));
+var CodeSoar;
+(function (CodeSoar) {
+    (function (Common) {
+        (function (Messages) {
+            var CursorMessage = (function () {
+                function CursorMessage(data) {
+                    this.m_shrunk = false;
+                    this.m_data = data;
+
+                    if (typeof this.m_data.r != "undefined") {
+                        this.m_shrunk = true;
+                    }
+                }
+                CursorMessage.prototype.Shrink = function () {
+                    if (this.m_shrunk) {
+                        return;
+                    }
+
+                    this.m_data.r = this.m_data.row;
+                    this.m_data.c = this.m_data.column;
+
+                    delete this.m_data.row;
+                    delete this.m_data.column;
+                };
+
+                CursorMessage.prototype.Expand = function () {
+                    if (!this.m_shrunk) {
+                        return;
+                    }
+
+                    this.m_data.row = this.m_data.r;
+                    this.m_data.column = this.m_data.c;
+
+                    delete this.m_data.r;
+                    delete this.m_data.c;
+                };
+
+                CursorMessage.prototype.ToJSON = function () {
+                    return JSON.stringify(this.m_data);
+                };
+
+                CursorMessage.prototype.ToObject = function () {
+                    return this.m_data;
+                };
+                return CursorMessage;
+            })();
+            Messages.CursorMessage = CursorMessage;
+        })(Common.Messages || (Common.Messages = {}));
+        var Messages = Common.Messages;
+    })(CodeSoar.Common || (CodeSoar.Common = {}));
+    var Common = CodeSoar.Common;
+})(CodeSoar || (CodeSoar = {}));
+var CodeSoar;
+(function (CodeSoar) {
     (function (Server) {
         var MessageRoom = (function () {
             function MessageRoom(docID, onEmpty) {
@@ -110,24 +198,75 @@ var CodeSoar;
             MessageRoom.prototype.OnJoin = function (socket, joinMsg) {
                 var self = this;
 
+                socket.User = new CodeSoar.Common.User();
+                socket.uId = this.m_id++;
+
+                var nameToUse = joinMsg.ToObject().name;
+
+                if (nameToUse == '') {
+                    nameToUse = 'Anonymous';
+                }
+
+                var nameAddition = 0;
+                var nameTaken = false;
+                var otherUsers = Array(0);
+                var otherUserCnt = 0;
+
+                if (io.sockets.clients(this.DocID).length != 0) {
+                    var socketClients = io.sockets.clients(this.DocID);
+
+                    for (var i = 0; i < socketClients.length; i++) {
+                        if (socketClients[i].uId != socket.uId) {
+                            if (socketClients[i].User.Name.toLowerCase() == nameToUse.toLowerCase()) {
+                                nameTaken = true;
+                            }
+                            otherUsers.length = otherUsers.length + 1;
+                            otherUsers[otherUserCnt++] = { uId: socketClients[i].uId, n: socketClients[i].User.Name };
+                        }
+                    }
+
+                    while (nameTaken) {
+                        nameTaken = false;
+                        nameAddition++;
+                        var nameTemp = nameToUse + nameAddition;
+                        for (var i = 0; i < socketClients.length; i++) {
+                            if (socketClients[i].uId != socket.uId && socketClients[i].User.Name.toLowerCase() == nameTemp.toLowerCase()) {
+                                nameTaken = true;
+                            }
+                        }
+                    }
+                }
+
+                socket.User.Name = nameAddition == 0 ? nameToUse : nameToUse + nameAddition;
+
                 socket.join(self.DocID);
-                socket.user = this.m_id++;
 
                 socket.on('cursor-change', function (data) {
+                    var dataClone = clone(data);
+
+                    var msg = new CodeSoar.Common.Messages.CursorMessage(dataClone);
+
+                    msg.Expand();
+
+                    data.uId = socket.uId;
+
+                    socket.User.Cursor = msg.ToObject();
+
                     socket.broadcast.to(self.DocID).emit('user-cursor-change', data);
                 });
 
                 socket.on('selection-change', function (data) {
-                    data.user = socket.user;
-
+                    data.uId = socket.uId;
                     socket.broadcast.to(self.DocID).emit('user-selection-change', data);
                 });
 
                 socket.on('message', function (data) {
+                    data.uId = socket.uId;
                     socket.broadcast.to(self.DocID).emit('user-message', data);
                 });
 
                 socket.on('edit', function (data) {
+                    data.uId = socket.uId;
                     socket.broadcast.to(self.DocID).emit('user-edit', data);
                 });
 
@@ -136,21 +275,23 @@ var CodeSoar;
                         self.m_onEmpty(self);
                     } else {
                         io.sockets.in(self.DocID).emit('user-left', {
-                            Name: socket.user.Name
+                            uId: socket.uId
                         });
                     }
                 });
 
-                socket.emit('join');
+                socket.emit('join', { uId: socket.uId, n: socket.User.Name });
+
+                socket.broadcast.to(this.DocID).emit("user-joined", { uId: socket.uId, n: socket.User.Name, u: otherUsers });
             };
 
             MessageRoom.prototype.GetUsers = function () {
-                var users = new Array(this.GetUserCount());
+                var users = new Array(0);
                 var socketClients = io.sockets.clients(this.DocID);
 
                 for (var i = 0; i < socketClients.length; i++) {
-                    if (typeof socketClients[i].userObj != 'undefined' && socketClients[i].userObj != null) {
-                        users.push(socketClients[i].userObj);
+                    if (typeof socketClients[i].User != 'undefined' && socketClients[i].User != null) {
+                        users.push(socketClients[i].User);
                     } else {
                         console.log("Empty User Object");
                     }
@@ -212,10 +353,37 @@ var CodeSoar;
     })(CodeSoar.Server || (CodeSoar.Server = {}));
     var Server = CodeSoar.Server;
 })(CodeSoar || (CodeSoar = {}));
-process.on('uncaughtException', function (err) {
-    console.error(err);
-    console.log("EXPLOSION!!! Node NOT Exiting...");
-});
+clone = function (obj) {
+    if (null == obj || "object" != typeof obj)
+        return obj;
+
+    var copy;
+
+    if (obj instanceof Date) {
+        copy = new Date();
+        copy.setTime(obj.getTime());
+        return copy;
+    }
+
+    if (obj instanceof Array) {
+        copy = [];
+        for (var i = 0, len = obj.length; i < len; i++) {
+            copy[i] = clone(obj[i]);
+        }
+        return copy;
+    }
+
+    if (obj instanceof Object) {
+        copy = {};
+        for (var attr in obj) {
+            if (obj.hasOwnProperty(attr))
+                copy[attr] = clone(obj[attr]);
+        }
+        return copy;
+    }
+
+    throw new Error("Unable to copy obj! Its type isn't supported.");
+};
 
 var express = require('express'), routes = require('./routes'), http = require('http'), path = require('path'), mongo = require('mongodb');
 

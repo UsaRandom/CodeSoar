@@ -3,47 +3,21 @@ var CodeSoar;
     (function (Common) {
         var User = (function () {
             function User() {
+                this.uId = 0;
                 this.Name = "Anonymous";
-                this.SelectionData = null;
-                this.CursorData = null;
+                this.Selection = null;
+                this.Cursor = null;
             }
+            User.Compare = function (a, b) {
+                if (typeof a == 'undefined' || typeof b == 'undefined' || a == null || b == null) {
+                    return false;
+                }
+
+                return a.uId == b.uId;
+            };
             return User;
         })();
         Common.User = User;
-    })(CodeSoar.Common || (CodeSoar.Common = {}));
-    var Common = CodeSoar.Common;
-})(CodeSoar || (CodeSoar = {}));
-var CodeSoar;
-(function (CodeSoar) {
-    (function (Common) {
-        (function (Languages) {
-            var HtmlLanguageData = (function () {
-                function HtmlLanguageData() {
-                    this.HasExeClient = true;
-                    this.AutoExeCapable = true;
-                }
-                return HtmlLanguageData;
-            })();
-            Languages.HtmlLanguageData = HtmlLanguageData;
-        })(Common.Languages || (Common.Languages = {}));
-        var Languages = Common.Languages;
-    })(CodeSoar.Common || (CodeSoar.Common = {}));
-    var Common = CodeSoar.Common;
-})(CodeSoar || (CodeSoar = {}));
-var CodeSoar;
-(function (CodeSoar) {
-    (function (Common) {
-        (function (Languages) {
-            var DefaultLanguageData = (function () {
-                function DefaultLanguageData() {
-                    this.HasExeClient = false;
-                    this.AutoExeCapable = false;
-                }
-                return DefaultLanguageData;
-            })();
-            Languages.DefaultLanguageData = DefaultLanguageData;
-        })(Common.Languages || (Common.Languages = {}));
-        var Languages = Common.Languages;
     })(CodeSoar.Common || (CodeSoar.Common = {}));
     var Common = CodeSoar.Common;
 })(CodeSoar || (CodeSoar = {}));
@@ -56,17 +30,6 @@ var CodeSoar;
                 this.ExeClients = Array(0);
                 this.EditNumber = 0;
                 this.DocID = docId;
-                this.LanguageName = languageName;
-
-                switch (languageName.toLowerCase()) {
-                    case 'html':
-                        this.LanguageData = new CodeSoar.Common.Languages.HtmlLanguageData();
-                        break;
-
-                    default:
-                        this.LanguageData = new CodeSoar.Common.Languages.DefaultLanguageData();
-                        break;
-                }
             }
             CodeSoarSession.prototype.ContainsUser = function (user) {
                 return this.IndexOfUser(user) != -1;
@@ -116,6 +79,8 @@ var CodeSoar;
         (function (View) {
             var Cursor = (function () {
                 function Cursor() {
+                    this.row = 0;
+                    this.col = 0;
                     this.m_id = CodeSoar.Client.View.Cursor.id++;
                 }
                 Cursor.prototype.Update = function (data) {
@@ -129,7 +94,7 @@ var CodeSoar;
 
                 Cursor.prototype.Paint = function () {
                     if ($("#" + this.m_id).length == 0) {
-                        $("#editor .ace_cursor-layer").append('<div id="' + this.m_id + '"></div>');
+                        $("#codesoar_cursor-layer").append('<div id="' + this.m_id + '"></div>');
                     }
 
                     var docPos = this.Editor.getSession().documentToScreenPosition(this.row, this.col);
@@ -149,6 +114,7 @@ var CodeSoar;
                 };
 
                 Cursor.prototype.Remove = function () {
+                    $("#" + this.m_id).remove();
                 };
 
                 Cursor.id = 0;
@@ -166,20 +132,28 @@ var CodeSoar;
         (function (View) {
             var Selection = (function () {
                 function Selection() {
+                    this.startRow = 0;
+                    this.endRow = 0;
+                    this.startCol = 0;
+                    this.endCol = 0;
                     this.m_id = CodeSoar.Client.View.Selection.id++;
                 }
                 Selection.prototype.Update = function (data) {
                     if (typeof data != 'undefined') {
-                        this.startRow = data.s.r;
-                        this.startCol = data.s.c;
-                        this.endRow = data.e.r;
-                        this.endCol = data.e.c;
+                        this.m_data = data;
+                        this.startRow = data.s[0].s.r;
+                        this.startCol = data.s[0].s.c;
+                        this.endRow = data.s[0].e.r;
+                        this.endCol = data.s[0].e.c;
                     }
 
                     this.Paint();
                 };
 
                 Selection.prototype.Paint = function () {
+                    for (var i = 0; i < this.m_data.s.length; i++) {
+                    }
+
                     var startPos = this.Editor.getSession().documentToScreenPosition(this.startRow, this.startCol);
                     var endPos = this.Editor.getSession().documentToScreenPosition(this.endRow, this.endCol);
 
@@ -190,7 +164,7 @@ var CodeSoar;
                         }
 
                         if ($("#" + this.m_id + "_single").length == 0) {
-                            $("#editor .ace_marker-layer:first").append('<div id="' + this.m_id + '_single"></div>');
+                            $("#codesoar_marker-layer").append('<div id="' + this.m_id + '_single"></div>');
                         }
 
                         $("#" + this.m_id + '_single').css({
@@ -206,6 +180,9 @@ var CodeSoar;
                 };
 
                 Selection.prototype.Remove = function () {
+                    if ($("#" + this.m_id + '_single').length == 0) {
+                        $("#" + this.m_id + '_single').remove();
+                    }
                 };
 
                 Selection.id = 0;
@@ -219,57 +196,123 @@ var CodeSoar;
 })(CodeSoar || (CodeSoar = {}));
 var CodeSoar;
 (function (CodeSoar) {
-    (function (Client) {
-        (function (View) {
-            var ActiveLine = (function () {
-                function ActiveLine() {
-                }
-                ActiveLine.prototype.Update = function (data) {
-                };
+    (function (Common) {
+        var Collection = (function () {
+            function Collection() {
+                this.m_objs = Array(0);
+            }
+            Collection.prototype.GetAllObjects = function () {
+                var objs = new Array(0);
 
-                ActiveLine.prototype.Remove = function () {
-                };
-                return ActiveLine;
-            })();
-            View.ActiveLine = ActiveLine;
-        })(Client.View || (Client.View = {}));
-        var View = Client.View;
-    })(CodeSoar.Client || (CodeSoar.Client = {}));
-    var Client = CodeSoar.Client;
+                for (var i = 0; i < this.m_objs.length; i++) {
+                    if (this.m_objs[i] != null && typeof this.m_objs[i] != 'undefined') {
+                        objs.length = objs.length + 1;
+                        objs[objs.length - 1] = this.m_objs[i];
+                    }
+                }
+
+                return objs;
+            };
+
+            Collection.prototype.Add = function (obj) {
+                for (var i = 0; i < this.m_objs.length; i++) {
+                    if (this.m_objs[i] == null) {
+                        this.m_objs[i] = obj;
+
+                        return;
+                    }
+                }
+
+                this.m_objs.length = this.m_objs.length + 1;
+                this.m_objs[this.m_objs.length - 1] = obj;
+            };
+
+            Collection.prototype.Contains = function (obj, compare) {
+                for (var i = 0; i < this.m_objs.length; i++) {
+                    if (compare(obj, this.m_objs[i])) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+
+            Collection.prototype.Get = function (where) {
+                for (var i = 0; i < this.m_objs.length; i++) {
+                    if (where(this.m_objs[i])) {
+                        return this.m_objs[i];
+                    }
+                }
+
+                return null;
+            };
+
+            Collection.prototype.Remove = function (obj, compare) {
+                for (var i = 0; i < this.m_objs.length; i++) {
+                    if (this.m_objs[i] == obj) {
+                        this.m_objs[i] = null;
+
+                        return;
+                    }
+                }
+            };
+            return Collection;
+        })();
+        Common.Collection = Collection;
+    })(CodeSoar.Common || (CodeSoar.Common = {}));
+    var Common = CodeSoar.Common;
 })(CodeSoar || (CodeSoar = {}));
 var CodeSoar;
 (function (CodeSoar) {
     (function (Client) {
         (function (View) {
-            var ViewCollection = (function () {
-                function ViewCollection() {
-                    this.m_views = Array(0);
+            var Renderer = (function () {
+                function Renderer(ec) {
+                    this.userHtmlPrototype = '<li class="user" id=""><span>  userNick</span></li>';
+                    this.Users = new CodeSoar.Common.Collection();
+                    this.m_ec = ec;
+
+                    $('<div class="ace_layer" id="codesoar_marker-layer"></div>').insertBefore('.ace_marker-layer:first');
+                    $('<div class="ace_layer" style="z-index: 4;" id="codesoar_cursor-layer"></div>').insertAfter('.ace_cursor-layer');
                 }
-                ViewCollection.prototype.AddView = function (view) {
-                    for (var i = 0; i < this.m_views.length; i++) {
-                        if (this.m_views[i] == null) {
-                            this.m_views[i] = view;
+                Renderer.prototype.Render = function () {
+                    var users = this.Users.GetAllObjects();
 
-                            return;
-                        }
-                    }
-
-                    this.m_views.length = this.m_views.length + 1;
-                    this.m_views[this.m_views.length] = view;
-                };
-
-                ViewCollection.prototype.RemoveView = function (view) {
-                    for (var i = 0; i < this.m_views.length; i++) {
-                        if (this.m_views[i] == view) {
-                            this.m_views[i] = null;
-
-                            return;
-                        }
+                    for (var i = 0; i < users.length; i++) {
+                        users[i].selectionRenderer.Paint();
+                        users[i].cursorRenderer.Paint();
                     }
                 };
-                return ViewCollection;
+
+                Renderer.prototype.Init = function () {
+                    $("#users > ul").append('<li class="user you" id="user_self"><span>  ' + this.m_ec.UserName + '</span></li>');
+                };
+
+                Renderer.prototype.AddUser = function (user) {
+                    if (this.Users.Contains(user, CodeSoar.Common.User.Compare)) {
+                        return;
+                    }
+
+                    user.selectionRenderer = new View.Selection();
+                    user.cursorRenderer = new View.Cursor();
+                    user.selectionRenderer.Editor = this.m_ec.Editor;
+                    user.cursorRenderer.Editor = this.m_ec.Editor;
+
+                    this.Users.Add(user);
+
+                    $("#users > ul").append('<li class="user" id="user_' + user.uId + '"><span>  ' + user.Name + '</span></li>');
+                };
+
+                Renderer.prototype.RemoveUser = function (user) {
+                    user.selectionRenderer.Remove();
+                    user.cursorRenderer.Remove();
+
+                    this.Users.Remove(user, CodeSoar.Common.User.Compare);
+
+                    $('#user_' + user.uId).remove();
+                };
+                return Renderer;
             })();
-            View.ViewCollection = ViewCollection;
+            View.Renderer = Renderer;
         })(Client.View || (Client.View = {}));
         var View = Client.View;
     })(CodeSoar.Client || (CodeSoar.Client = {}));
@@ -482,6 +525,18 @@ var CodeSoar;
             Util.GetTimestamp = function () {
                 var d = new Date();
                 return d.getTime() + (d.getTimezoneOffset() * 60000);
+            };
+
+            Util.MixColors = function (firstColor, secondColor) {
+                var result = 0;
+
+                result = Math.floor(0.5 * ((firstColor & 0x00FF0000) >>> 16) + 0.5 * ((secondColor & 0x00FF0000) >>> 16)) << 16;
+
+                result += Math.floor(0.5 * ((firstColor & 0x0000FF00) >>> 8) + 0.5 * ((secondColor & 0x0000FF00) >>> 8)) << 8;
+
+                result += Math.floor(0.5 * (firstColor & 0x000000FF) + 0.5 * (secondColor & 0x000000FF));
+
+                return result;
             };
             return Util;
         })();
@@ -739,57 +794,179 @@ var CodeSoar;
 })(CodeSoar || (CodeSoar = {}));
 var CodeSoar;
 (function (CodeSoar) {
+    (function (Common) {
+        (function (Messages) {
+            var CursorMessage = (function () {
+                function CursorMessage(data) {
+                    this.m_shrunk = false;
+                    this.m_data = data;
+
+                    if (typeof this.m_data.r != "undefined") {
+                        this.m_shrunk = true;
+                    }
+                }
+                CursorMessage.prototype.Shrink = function () {
+                    if (this.m_shrunk) {
+                        return;
+                    }
+
+                    this.m_data.r = this.m_data.row;
+                    this.m_data.c = this.m_data.column;
+
+                    delete this.m_data.row;
+                    delete this.m_data.column;
+                };
+
+                CursorMessage.prototype.Expand = function () {
+                    if (!this.m_shrunk) {
+                        return;
+                    }
+
+                    this.m_data.row = this.m_data.r;
+                    this.m_data.column = this.m_data.c;
+
+                    delete this.m_data.r;
+                    delete this.m_data.c;
+                };
+
+                CursorMessage.prototype.ToJSON = function () {
+                    return JSON.stringify(this.m_data);
+                };
+
+                CursorMessage.prototype.ToObject = function () {
+                    return this.m_data;
+                };
+                return CursorMessage;
+            })();
+            Messages.CursorMessage = CursorMessage;
+        })(Common.Messages || (Common.Messages = {}));
+        var Messages = Common.Messages;
+    })(CodeSoar.Common || (CodeSoar.Common = {}));
+    var Common = CodeSoar.Common;
+})(CodeSoar || (CodeSoar = {}));
+var CodeSoar;
+(function (CodeSoar) {
     (function (Client) {
         var EditorController = (function () {
             function EditorController() {
                 this.m_syncMode = false;
                 this.m_lastEdit = null;
-                this.m_cursor = new CodeSoar.Client.View.Cursor();
-                this.m_selection = new CodeSoar.Client.View.Selection();
             }
             EditorController.prototype.Setup = function (session, editor) {
                 this.Session = session;
                 this.Editor = editor;
-
-                console.log(editor);
-                console.log(this.Editor);
 
                 this.Editor.setReadOnly(true);
 
                 this.EditorSession = editor.getSession();
                 this.EditorDocument = this.EditorSession.getDocument();
 
-                console.log(SOCKET_HOST);
-                this.m_socket = io.connect(SOCKET_HOST);
-
-                this.m_cursor.Editor = this.Editor;
-                this.m_selection.Editor = this.Editor;
-
                 var self = this;
 
-                this.m_socket.on('join', function (data) {
+                this.Renderer = new CodeSoar.Client.View.Renderer(self);
+
+                this.Socket = io.connect(SOCKET_HOST);
+
+                this.Socket.on('join', function (data) {
                     self.Editor.setReadOnly(false);
 
+                    self.UserID = data.uId;
+                    self.UserName = data.n;
+
+                    console.log(data.u);
+                    if (typeof data.u != 'undefined') {
+                        console.log('found users to add');
+                        for (var i = 0; i < data.u.length; i++) {
+                            var usr = new CodeSoar.Common.User();
+
+                            usr.uId = data.u[i].uId;
+                            usr.Name = data.u[i].Name;
+                            if (data.u[i].s)
+                                usr.Selection = data.u[i].s;
+                            if (data.u[i].c)
+                                usr.Cursor = data.u[i].c;
+
+                            self.Renderer.AddUser(usr);
+                        }
+                    }
+
                     $("#editor").css("visibility", "visible");
-                });
-                this.m_socket.on('user-joined', this.OnSocketJoined);
-                this.m_socket.on('user-left', this.OnSocketLeft);
 
-                this.m_socket.on('user-selection-change', function (data) {
-                    self.m_cursor.Update(data.c);
-                    self.m_selection.Update(data.s[0]);
+                    self.Renderer.Init();
+                    self.Renderer.Render();
                 });
 
-                this.m_socket.on('user-message', this.OnSocketMessage);
-                this.m_socket.on('user-edit', function (data) {
+                this.Socket.on('user-joined', function (data) {
+                    var usr = new CodeSoar.Common.User();
+
+                    usr.uId = data.uId;
+                    usr.Name = data.n;
+
+                    self.Renderer.AddUser(usr);
+                });
+
+                this.Socket.on('user-left', function (data) {
+                    var usr = new CodeSoar.Common.User();
+
+                    usr.uId = data.uId;
+
+                    self.Renderer.RemoveUser(usr);
+
+                    self.Renderer.Render();
+                });
+
+                this.Socket.on('user-cursor-change', function (data) {
+                    var usr = self.Renderer.Users.Get(function (a) {
+                        if (typeof a == 'undefined' || a == null) {
+                            return false;
+                        }
+                        if (a.uId == data.uId) {
+                            return true;
+                        }
+                        return false;
+                    });
+
+                    usr.cursorRenderer.Update(data);
+                });
+
+                this.Socket.on('user-selection-change', function (data) {
+                    var usr = self.Renderer.Users.Get(function (a) {
+                        if (typeof a == 'undefined' || a == null) {
+                            return false;
+                        }
+                        if (a.uId == data.uId) {
+                            return true;
+                        }
+                        return false;
+                    });
+
+                    usr.selectionRenderer.Update(data);
+                });
+
+                this.Socket.on('user-message', function (data) {
+                    var usr = self.Renderer.Users.Get(function (a) {
+                        if (typeof a == 'undefined' || a == null) {
+                            return false;
+                        }
+                        if (a.uId == data.uId) {
+                            return true;
+                        }
+                        return false;
+                    });
+
+                    $("#chatMsgs").append('<li class="msg"><strong>' + usr.Name + ': </strong>' + data + '</li>');
+                });
+
+                this.Socket.on('user-edit', function (data) {
                     var dataClone = clone(data);
 
                     var msg = CodeSoar.Common.Messages.EditMessageFactory.BuildEditMessage(dataClone);
 
                     msg.Expand();
 
-                    console.log('User-Edit msg rec: ' + msg.ToJSON());
                     self.EditorDocument.applyDeltas([msg.ToObject()], true);
+
+                    self.Renderer.Render();
                 });
 
                 this.EditorSession.on('change', function (data) {
@@ -799,7 +976,7 @@ var CodeSoar;
 
                     var dataClone = clone(data);
 
-                    console.log(dataClone);
+                    dataClone.ts = Date.now();
 
                     delete dataClone.data.ignore;
 
@@ -807,17 +984,30 @@ var CodeSoar;
 
                     msg.Shrink();
 
-                    self.m_socket.emit('edit', msg.ToJSON());
+                    self.Socket.emit('edit', msg.ToJSON());
+
+                    self.Renderer.Render();
                 });
-                this.EditorSession.on('changeScrollTop', this.OnVerticalScroll);
-                this.EditorSession.on('changeScrollLeft', this.OnHorizontalScroll);
+
+                this.EditorSession.on('changeScrollTop', function (val) {
+                    self.Renderer.Render();
+                });
+
+                this.EditorSession.on('changeScrollLeft', function (val) {
+                    self.Renderer.Render();
+                });
+
+                this.EditorSession.on('changeCursor', function (data) {
+                    var dataClone = clone(self.Editor.getCursorPosition());
+
+                    var msg = new CodeSoar.Common.Messages.CursorMessage(dataClone);
+
+                    msg.Shrink();
+
+                    self.Socket.emit('cursor-change', msg);
+                });
 
                 this.EditorSession.selection.on('changeSelection', function (data) {
-                    self.m_cursor.Update();
-                    self.m_selection.Update();
-                });
-
-                setInterval(function () {
                     var msg = {};
 
                     var selection = self.EditorSession.selection;
@@ -844,24 +1034,48 @@ var CodeSoar;
                             },
                             e: {
                                 c: selection.lead.column,
-                                r: selection.anchor.row
+                                r: selection.lead.row
                             }
                         };
                     }
 
-                    var cp = self.Editor.getCursorPosition();
+                    self.Socket.emit('selection-change', msg);
 
-                    msg.c = {
-                        r: cp.row,
-                        c: cp.column
-                    };
-                    self.m_socket.emit('selection-change', msg);
-                }, 150);
+                    self.Renderer.Render();
+                });
 
-                document.addEventListener("EditorRedoEvent", this.OnRedo, false);
-                document.addEventListener("EditorUndoEvent", this.OnUndo, false);
+                this.Editor.on("focus", function () {
+                });
 
-                this.m_socket.emit('join', { docID: this.Session.DocID, name: $("#nickInput").val() });
+                this.Editor.on("blur", function () {
+                });
+
+                $("#chatText").bind('keypress', function (e) {
+                    if ((e.keyCode || e.which) == 13) {
+                        if ($("#chatText").val() != '') {
+                            self.Socket.emit('message', $("#chatText").val());
+                            $("#chatMsgs").append('<li class="msg"><strong>' + self.UserName + ': </strong>' + $("#chatText").val() + '</li>');
+
+                            $("#chatText").val('');
+                        }
+                    }
+                });
+
+                $("#darkBtn").click(function () {
+                    if ($("#darkBtn").hasClass("active")) {
+                        return;
+                    } else {
+                        self.Editor.setTheme("ace/theme/twilight");
+                    }
+                });
+
+                $("#lightBtn").click(function () {
+                    if ($("#lightBtn").hasClass("active")) {
+                        return;
+                    } else {
+                        self.Editor.setTheme("");
+                    }
+                });
 
                 var updateContainer = function () {
                     $("#chatContainer").height($(document).height() - $("#users").height() - parseInt($("#users").css("margin-top")) - $("#controls").height() - parseInt($("#controls").css("margin-top")) - $(".user").length - $("#chatText").height() - $("#chatText").height() - 4);
@@ -873,62 +1087,8 @@ var CodeSoar;
                 });
 
                 updateContainer();
-            };
 
-            EditorController.prototype.OnJoin = function (data) {
-            };
-
-            EditorController.prototype.OnSocketJoined = function (data) {
-            };
-
-            EditorController.prototype.OnSocketLeft = function (data) {
-            };
-
-            EditorController.prototype.OnSocketCursorChange = function (data) {
-            };
-
-            EditorController.prototype.OnSocketSelectionChange = function (data) {
-            };
-
-            EditorController.prototype.OnSocketMessage = function (data) {
-            };
-
-            EditorController.prototype.OnSocketLanguageChange = function (data) {
-            };
-
-            EditorController.prototype.OnSocketEdit = function (data) {
-            };
-
-            EditorController.prototype.OnEdit = function (data) {
-            };
-
-            EditorController.prototype.OnRedo = function (data) {
-                this.OnEdit(data);
-            };
-
-            EditorController.prototype.OnUndo = function (data) {
-                this.OnEdit(data);
-            };
-
-            EditorController.prototype.OnVerticalScroll = function (scrollTop) {
-            };
-
-            EditorController.prototype.OnHorizontalScroll = function (scrollLeft) {
-            };
-
-            EditorController.prototype.OnCursorChange = function () {
-                var cursorPos = this.EditorSession.getCursor();
-            };
-
-            EditorController.prototype.OnSelectionChange = function () {
-                var selection = this.EditorSession.selection;
-
-                if (selection.inMultiSelectMode) {
-                    return;
-                }
-
-                var startPos = { column: selection.anchor.column, row: selection.anchor.row };
-                var endPos = { column: selection.lead.column, row: selection.lead.row };
+                this.Socket.emit('join', { docID: this.Session.DocID, name: $("#nickInput").val() });
             };
             return EditorController;
         })();

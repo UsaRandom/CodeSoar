@@ -1,0 +1,438 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "app.js",
+			"settings":
+			{
+				"buffer_size": 12323,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "bash: no job control in this shell\nmartin@martin-linux ~/.config/sublime-text-3/Packages $ node app.js\n\nmodule.js:340\n    throw err;\n          ^\nError: Cannot find module '/home/martin/.config/sublime-text-3/Packages/app.js'\n    at Function.Module._resolveFilename (module.js:338:15)\n    at Function.Module._load (module.js:280:25)\n    at Function.Module.runMain (module.js:497:10)\n    at startup (node.js:119:16)\n    at node.js:901:3\nmartin@martin-linux ~/.config/sublime-text-3/Packages $ cd ~\nmartin@martin-linux ~ $ cd codesoar\nmartin@martin-linux ~/codesoar $ cd codesoar\nmartin@martin-linux ~/codesoar/codesoar $ dir\napp.js			    deplist.txt		    package.json  test.js\nbuild.sh		    node_modules	    public	  TODO\ncodesoar.sublime-project    notes.txt		    README	  ts\ncodesoar.sublime-workspace  npm_global_module_list  routes	  views\nmartin@martin-linux ~/codesoar/codesoar $ node app.js\ninfo: socket.io started\nwarn: error raised: Error: listen EACCES\nbash: no job control in this shell\nmartin@martin-linux ~/.config/sublime-text-3/Packages $ sudo node app.js\nsudo: no tty present and no askpass program specified\nmartin@martin-linux ~/.config/sublime-text-3/Packages $ ",
+			"settings":
+			{
+				"buffer_size": 1179,
+				"line_ending": "Unix",
+				"name": "*REPL* [bash -i]",
+				"scratch": true
+			}
+		},
+		{
+			"contents": "> js\nReferenceError: js is not defined\n    at repl:1:2\n    at REPLServer.self.eval (repl.js:110:21)\n    at Interface.<anonymous> (repl.js:239:12)\n    at Interface.EventEmitter.emit (events.js:95:17)\n    at Interface._onLine (readline.js:202:10)\n    at Interface.<anonymous> (readline.js:322:12)\n    at Array.forEach (native)\n    at Interface._normalWrite (readline.js:321:11)\n    at Socket.ondata (readline.js:91:10)\n    at Socket.EventEmitter.emit (events.js:95:17)\n> js.\nfaw\nReferenceError: js is not defined\n    at repl:1:2\n    at REPLServer.self.eval (repl.js:110:21)\n    at Interface.<anonymous> (repl.js:239:12)\n    at Interface.EventEmitter.emit (events.js:95:17)\n    at Interface._onLine (readline.js:202:10)\n    at Interface.<anonymous> (readline.js:322:12)\n    at Array.forEach (native)\n    at Interface._normalWrite (readline.js:321:11)\n    at Socket.ondata (readline.js:91:10)\n    at Socket.EventEmitter.emit (events.js:95:17)\n> \nundefined\n> help\nReferenceError: help is not defined\n    at repl:1:2\n    at REPLServer.self.eval (repl.js:110:21)\n    at Interface.<anonymous> (repl.js:239:12)\n    at Interface.EventEmitter.emit (events.js:95:17)\n    at Interface._onLine (readline.js:202:10)\n    at Interface.<anonymous> (readline.js:322:12)\n    at Array.forEach (native)\n    at Interface._normalWrite (readline.js:321:11)\n    at Socket.ondata (readline.js:91:10)\n    at Socket.EventEmitter.emit (events.js:95:17)\n> console.log(\"yo?\");\nyo?\nundefined\n> ",
+			"settings":
+			{
+				"buffer_size": 1461,
+				"line_ending": "Unix",
+				"name": "*REPL* [js]",
+				"scratch": true
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 140.0,
+		"selected_items":
+		[
+			[
+				"repl no",
+				"SublimeREPL: Node"
+			],
+			[
+				"shell",
+				"SublimeREPL: Shell"
+			],
+			[
+				"repl",
+				"SublimeREPL: Shell"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Remove Package"
+			],
+			[
+				"repl sh",
+				"SublimeREPL: Shell"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"packa",
+				"Package Control: List Packages"
+			],
+			[
+				"pack",
+				"Package Control: Install Package"
+			],
+			[
+				"package control: ins",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 449.0
+	},
+	"console":
+	{
+		"height": 121.0,
+		"history":
+		[
+			"chown",
+			"help"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/home/martin/.config/sublime-text-3/Packages/SideBarEnhancements/Default (Linux).sublime-keymap",
+		"/home/martin/.config/sublime-text-3/Packages/SublimeREPL/SublimeREPL.sublime-settings",
+		"/home/martin/.config/sublime-text-3/Packages/User/SublimeREPL.sublime-settings",
+		"/home/martin/.config/sublime-text-3/Packages/SideBarEnhancements/CHANGELOG",
+		"/home/martin/.config/sublime-text-3/Packages/SideBarEnhancements/Default.sublime-keymap",
+		"/home/martin/.config/sublime-text-3/Packages/SideBarEnhancements/SideBar.py",
+		"/home/martin/.config/sublime-text-3/Packages/Default/Preferences.sublime-settings",
+		"/home/martin/.config/sublime-text-3/Packages/User/Default (Linux).sublime-keymap",
+		"/home/martin/.config/sublime-text-3/Packages/Default/Default (Linux).sublime-keymap",
+		"/home/martin/codesoar/codesoar/ts/clientside/Edit.ts",
+		"/home/martin/codesoar/codesoar/views/editor.jade",
+		"/home/martin/codesoar/codesoar/notes.txt",
+		"/home/martin/codesoar/codesoar/ts/common/CodeSoarSession.ts",
+		"/home/martin/codesoar/codesoar/se./public/javascripts/codesoar.client.js"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "app.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 12323,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								787,
+								787
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 1,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1179,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1179,
+								1179
+							]
+						],
+						"settings":
+						{
+							"auto_complete": true,
+							"auto_complete_commit_on_tab": true,
+							"auto_indent": false,
+							"detect_indentation": false,
+							"gutter": false,
+							"history_arrows": true,
+							"indent_subsequent_lines": false,
+							"line_numbers": false,
+							"repl": true,
+							"repl_external_id": null,
+							"repl_id": "18281f2c1ce9482ebfed307ab670578f",
+							"repl_restart_args":
+							{
+								"cmd":
+								{
+									"linux":
+									[
+										"bash",
+										"-i"
+									],
+									"osx":
+									[
+										"bash",
+										"-i"
+									],
+									"windows":
+									[
+										"cmd.exe"
+									]
+								},
+								"cmd_postfix": "\n",
+								"cwd": "$file_path",
+								"encoding":
+								{
+									"linux": "utf-8",
+									"osx": "utf-8",
+									"windows": "$win_cmd_encoding"
+								},
+								"env":
+								{
+								},
+								"suppress_echo": true,
+								"syntax": "Packages/Text/Plain text.tmLanguage",
+								"type": "subprocess"
+							},
+							"repl_sublime2": false,
+							"smart_indent": false,
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 357.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1461,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1461,
+								1461
+							]
+						],
+						"settings":
+						{
+							"auto_complete": true,
+							"auto_complete_commit_on_tab": true,
+							"auto_indent": false,
+							"detect_indentation": false,
+							"gutter": false,
+							"history_arrows": true,
+							"indent_subsequent_lines": false,
+							"line_numbers": false,
+							"repl": true,
+							"repl_external_id": "js",
+							"repl_id": "8dfaca8192cc42efb067d5771f2b8531",
+							"repl_restart_args":
+							{
+								"autocomplete_server": true,
+								"cmd":
+								{
+									"linux":
+									[
+										"node",
+										"${packages}/SublimeREPL/config/NodeJS/repl.js"
+									],
+									"osx":
+									[
+										"node",
+										"${packages}/SublimeREPL/config/NodeJS/repl.js"
+									],
+									"windows":
+									[
+										"node.exe",
+										"${packages}/SublimeREPL/config/NodeJS/repl.js"
+									]
+								},
+								"cwd": "$file_path",
+								"encoding": "utf8",
+								"extend_env":
+								{
+									"NODE_NO_READLINE": 1
+								},
+								"external_id": "js",
+								"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+								"type": "subprocess"
+							},
+							"repl_sublime2": false,
+							"smart_indent": false,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 663.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 25.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			],
+			[
+				0,
+				1,
+				1,
+				2
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			0.779429250892,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"project": "codesoar.sublime-project",
+	"replace":
+	{
+		"height": 46.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"",
+				"notes.txt"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"settings":
+	{
+		"last_automatic_layout":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			],
+			[
+				0,
+				1,
+				1,
+				2
+			]
+		]
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 212.0,
+	"status_bar_visible": false,
+	"template_settings":
+	{
+		"max_columns": 1
+	}
+}

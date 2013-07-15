@@ -32,10 +32,25 @@ export class User {
 	}
 
 
+	static Compare(a : CodeSoar.Common.User, b : CodeSoar.Common.User) : boolean {
 
+		if (typeof a == 'undefined' || typeof b == 'undefined' ||
+			a == null || b == null) {
+			return false;
+		}
+
+		return a.uId == b.uId;
+
+	}
+	
+
+	public uId : number = 0;
 	public Name : string = "Anonymous";
-	public SelectionData : any = null;
-	public CursorData : any = null;
+	public Selection : any = null;
+	public Cursor : any = null;
+
+	public selectionRenderer : any;
+	public cursorRenderer : any;
 }
 
 }

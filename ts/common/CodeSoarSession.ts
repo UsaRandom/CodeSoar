@@ -12,9 +12,6 @@ CodeSoarSession
 
 /// <reference path="User.ts"/>
 /// <reference path="IExeClient.ts"/>
-/// <reference path="languages/ILanguageData.ts"/>
-/// <reference path="languages/HtmlLanguageData.ts"/>
-/// <reference path="languages/DefaultLanguageData.ts"/>
 
 module CodeSoar.Common {
 
@@ -26,22 +23,6 @@ export class CodeSoarSession {
 	constructor (docId : string, languageName : string) {
 
 		this.DocID = docId;
-		this.LanguageName = languageName;
-
-
-		//TODO: this should probably be somewhere else...
-
-		//Get LanguageData object for provided language
-		switch (languageName.toLowerCase()) {
-
-			case 'html':
-				this.LanguageData = new CodeSoar.Common.Languages.HtmlLanguageData();
-				break;
-
-			default:
-				this.LanguageData = new CodeSoar.Common.Languages.DefaultLanguageData();
-				break;
-		}
 	}
 
 
@@ -100,7 +81,6 @@ export class CodeSoarSession {
 	public Users : CodeSoar.Common.User[] = Array(0);
 	public ExeClients : CodeSoar.Common.IExeClient[] = Array(0);
 	public LanguageName : string;
-	public LanguageData : CodeSoar.Common.Languages.ILanguageData;
 	public EditNumber : number = 0;
 
 }

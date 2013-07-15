@@ -40,7 +40,7 @@ export class Cursor implements CodeSoar.Client.View.IView {
 		//if cursor div doesn't exists
 		if ($("#"+this.m_id).length == 0) {
 
-			$("#editor .ace_cursor-layer").append('<div id="'+this.m_id+'"></div>');
+			$("#codesoar_cursor-layer").append('<div id="'+this.m_id+'"></div>');
 			
 		}
 
@@ -68,11 +68,12 @@ export class Cursor implements CodeSoar.Client.View.IView {
 
 	public Remove() : void {
 		//go away
+		$("#"+this.m_id).remove();
 	}
 
 	private m_id : number;
-	private row : number;
-	private col : number;
+	private row : number = 0;
+	private col : number = 0;
 	static id : number = 0;
 
 	public Editor : any;

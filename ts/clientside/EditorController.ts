@@ -28,13 +28,13 @@ EditorController
 
 /// <reference path="./view/Cursor.ts"/>
 /// <reference path="./view/Selection.ts"/>
-/// <reference path="./view/ActiveLine.ts"/>
-/// <reference path="./view/ViewCollection.ts"/>
+/// <reference path="./view/Renderer.ts"/>
 /// <reference path="../common/User.ts"/>
 /// <reference path="../common/IExeClient.ts"/>
 /// <reference path="../common/CodeSoarSession.ts"/>
 /// <reference path="../common/CircularStack.ts"/>
 /// <reference path="../common/messages/EditMessageFactory.ts"/>
+/// <reference path="../common/messages/CursorMessage.ts"/>
 /// <reference path="../common/messages/IMessage.ts"/>
 /// <reference path="../common/Util.ts"/>
 
@@ -50,8 +50,6 @@ export class EditorController {
 		this.Session = session;
 		this.Editor = editor;
 
-		console.log(editor);
-		console.log(this.Editor);
 
 		//set readonly till we are connected.
 		this.Editor.setReadOnly(true);
@@ -59,100 +57,241 @@ export class EditorController {
 		this.EditorSession = editor.getSession();
 		this.EditorDocument = this.EditorSession.getDocument();
 
-		//connect to websocket
-		console.log(SOCKET_HOST);
-		this.m_socket = io.connect(SOCKET_HOST);
-
-		//HACK, remove!
-		this.m_cursor.Editor = this.Editor;
-		this.m_selection.Editor = this.Editor;
 
 
-
+		//reference to this EditorController
 		var self = this;
 
+		//create renderer.
+		this.Renderer = new CodeSoar.Client.View.Renderer(self);
+
+
+		//connect to websocket
+		this.Socket = io.connect(SOCKET_HOST);
+
 		//setup socket events.
-		this.m_socket.on('join', function(data) {
+		this.Socket.on('join', function(data) {
 
 			self.Editor.setReadOnly(false);
 
+			//data { uId: #, n: "name"}
+			self.UserID = data.uId;
+			self.UserName = data.n;
 
-		      //set editor to visible
-		      $("#editor").css("visibility", "visible");
+			console.log(data.u);
+			if (typeof data.u != 'undefined') {
+				console.log('found users to add');
+				for(var i = 0; i < data.u.length; i++) {
+					var usr : CodeSoar.Common.User = new CodeSoar.Common.User();
+
+					usr.uId = data.u[i].uId;
+					usr.Name = data.u[i].Name;
+					if (data.u[i].s)
+						usr.Selection = data.u[i].s;
+					if (data.u[i].c)
+						usr.Cursor = data.u[i].c;
+
+					self.Renderer.AddUser(usr);
+
+				}
+			}
+
+		    //set editor to visible
+		    $("#editor").css("visibility", "visible");
+
+		    self.Renderer.Init();
+			self.Renderer.Render();
 
 		});
-		this.m_socket.on('user-joined', this.OnSocketJoined);
-		this.m_socket.on('user-left', this.OnSocketLeft);
-	//	this.m_socket.on('user-cursor-change', this.OnSocketCursorChange);
 		
-		//Selection change
-		this.m_socket.on('user-selection-change', function(data) {
-			
 
-			//display cursor
-			self.m_cursor.Update(data.c);
-			self.m_selection.Update(data.s[0]);
+		this.Socket.on('user-joined', function(data) {
+
+
+			//add user to user list
+			//uId: socket.uId, n: socket.User.Name
+
+			var usr : CodeSoar.Common.User = new CodeSoar.Common.User();
+
+			usr.uId = data.uId;
+			usr.Name = data.n;
+
+			self.Renderer.AddUser(usr);
+
+			//self.Renderer.Render();
 		});
 
-		this.m_socket.on('user-message', this.OnSocketMessage);
-		this.m_socket.on('user-edit', function(data) {
 
+		this.Socket.on('user-left', function(data) {
+
+			//remove user from user list
+			//
+			//remove all user-related info, except messages and current edits.
+
+			var usr : CodeSoar.Common.User = new CodeSoar.Common.User();
+
+			usr.uId = data.uId;
+
+			self.Renderer.RemoveUser(usr);
+
+			self.Renderer.Render();
+		});
+
+
+		this.Socket.on('user-cursor-change', function(data) {
+
+			//update where the given users cursor is located.
+			var usr : CodeSoar.Common.User = self.Renderer.Users.Get(function(a : CodeSoar.Common.User) {
+				if (typeof a == 'undefined' || a == null) {
+					return false;
+				}
+				if (a.uId == data.uId) {
+					return true;
+				}
+				return false;
+			});
+
+			usr.cursorRenderer.Update(data);
+
+			//self.Renderer.Render();
+		});
+		
+
+		//Selection change
+		this.Socket.on('user-selection-change', function(data) {
+			
+			//Update the given users selection
+			//update where the given users cursor is located.
+			var usr : CodeSoar.Common.User = self.Renderer.Users.Get(function(a : CodeSoar.Common.User) {
+				if (typeof a == 'undefined' || a == null) {
+					return false;
+				}
+				if (a.uId == data.uId) {
+					return true;
+				}
+				return false;
+			});
+
+			usr.selectionRenderer.Update(data);
+			//self.Renderer.Render();
+		});
+
+
+
+		this.Socket.on('user-message', function(data) {
+			
+			//fetch actual user's name	
+			var usr : CodeSoar.Common.User = self.Renderer.Users.Get(function(a : CodeSoar.Common.User) {
+				if (typeof a == 'undefined' || a == null) {
+					return false;
+				}
+				if (a.uId == data.uId) {
+					return true;
+				}
+				return false;
+			});
+
+			$("#chatMsgs").append('<li class="msg"><strong>'+usr.Name+': </strong>'+data+'</li>');
+
+		});
+
+
+		//On other user's edit.
+		this.Socket.on('user-edit', function(data) {
+
+			//clone the data object.
 			var dataClone = clone(data);
 
 			//build the edit message from provided data.
 			var msg : CodeSoar.Common.Messages.IMessage = CodeSoar.Common.Messages.EditMessageFactory.BuildEditMessage(dataClone);
 
-			//Do some magic, strip socket stuff, send off to OnEdit()
-
+			//expand the message so it can be used with the editor
 			msg.Expand();
 
+			//TODO: Sync stuff.
 
-			console.log('User-Edit msg rec: ' + msg.ToJSON());
+			//apply the change.
 			self.EditorDocument.applyDeltas([msg.ToObject()], true);
 
+
+			self.Renderer.Render();
+
 		});
-	//	this.m_socket.on('user-language-change', this.OnSocketLanguageChange);
 
 
+		//Not worrying about this just now...
+		//this.Socket.on('user-language-change', this.OnSocketLanguageChange);
 
 
-
-
-		//setup editor events.
+		//On edit
 		this.EditorSession.on('change', function(data) {
 
+			//do we ignore this?
 			if (data.data.ignore) {
 				return;
 			}
 			
+			//clone data object
 			var dataClone = clone(data);
 
-			console.log(dataClone);
+			//add timestamp
+			dataClone.ts = Date.now();
 
+			//remove ignore attribute
 			delete dataClone.data.ignore;
 
+			//create message to send off to server.
 			var msg : CodeSoar.Common.Messages.IMessage = CodeSoar.Common.Messages.EditMessageFactory.BuildEditMessage(dataClone.data);
 
+			//srink the message
 			msg.Shrink();
+
 			//send the edit to the other users.
-			self.m_socket.emit('edit', msg.ToJSON());
+			self.Socket.emit('edit', msg.ToJSON());
+
+
+			self.Renderer.Render();
 
 		});
-		this.EditorSession.on('changeScrollTop', this.OnVerticalScroll);
-		this.EditorSession.on('changeScrollLeft', this.OnHorizontalScroll);
-	//	this.EditorSession.on('changeCursor', this.OnCursorChange);
+
+		this.EditorSession.on('changeScrollTop', function(val) {
+
+			//val = editorSession.$scrollTop.
+
+			//Renderer selections/cursors/etc.
+
+			self.Renderer.Render();
+
+		});
+
+		this.EditorSession.on('changeScrollLeft', function(val) {
+
+			//val = editorSession.$scrollLeft.
+
+			//Renderer selections/cursors/etc.
+
+			self.Renderer.Render();
+		});
+		
+		this.EditorSession.on('changeCursor', function(data) {
+		
+
+			//clone data object
+			var dataClone = clone(self.Editor.getCursorPosition());
+
+			//build the cursor message from provided data.
+			var msg : CodeSoar.Common.Messages.IMessage = new CodeSoar.Common.Messages.CursorMessage(dataClone);
+
+			//shrink
+			msg.Shrink();
+
+			//send off cursor change message
+			self.Socket.emit('cursor-change', msg);
+		});
+
 		this.EditorSession.selection.on('changeSelection', function(data) {
-		    self.m_cursor.Update();
-			self.m_selection.Update();
-		});
 
-		//every 150ms, send update about cursor position/selection
-		//This is incredibly butts.
-		setInterval(function() {
 			var msg : any = {};
-
-			//selection ranges
-			
 
 			var selection : any = self.EditorSession.selection;
 
@@ -192,291 +331,105 @@ export class EditorController {
 						//column
 						c : selection.lead.column,
 						//row
-						r : selection.anchor.row
+						r : selection.lead.row
 					}
 
 				};
 			}
-			//end of building selection ranges.
-			var cp = self.Editor.getCursorPosition();
-			//getCursorPosition.
-			msg.c = {
-				r: cp.row,
-				c: cp.column
-			};
-			self.m_socket.emit('selection-change', msg);
-
-		}, 150);
 
 
-		//Custom events
+			//send off selection change message
+			self.Socket.emit('selection-change', msg);
+
+
+			self.Renderer.Render();
+
+		});
+
+		//fired when the editor gains focus.
+		this.Editor.on("focus", function() {
+
+			//do nothing for now...
+
+		});
+
+		//fired when the editor looses focus.
+		this.Editor.on("blur", function() {
+
+			//do nothing for now...
+
+		});
+
+
 
 		//setup undo/redo events because apparently these don't count as 'changes' to the document
 		//in this silly version... w/e
-		document.addEventListener("EditorRedoEvent", this.OnRedo, false);
-		document.addEventListener("EditorUndoEvent", this.OnUndo, false);
+
+		//document.addEventListener("EditorRedoEvent", this.OnRedo, false);
+		//document.addEventListener("EditorUndoEvent", this.OnUndo, false);
+
+		//UI Control
+		$("#chatText").bind('keypress', function (e) {
+		    if ((e.keyCode || e.which) == 13) {
+				if ($("#chatText").val() != '') {
+		        	self.Socket.emit('message', $("#chatText").val());
+					$("#chatMsgs").append('<li class="msg"><strong>'+self.UserName+': </strong>'+$("#chatText").val()+'</li>');
+		      	
+		        	$("#chatText").val('');
+
+				}
+	    	}
+		});
+
+		$("#darkBtn").click(function() {
+			if ($("#darkBtn").hasClass("active")) {
+				return;
+				} else {
+					self.Editor.setTheme("ace/theme/twilight");
+
+					//Set themes for user's
+
+				}
+		});
+
+		$("#lightBtn").click(function() {
+			if ($("#lightBtn").hasClass("active")) {
+				return;
+				} else {
+					self.Editor.setTheme("");
+
+					//Set themes for user's
+
+				}
+		});
 
 
-
-		//request to join document room, using name provided by user.
-		this.m_socket.emit('join', { docID: this.Session.DocID, name: $("#nickInput").val() });
-
-
-		//fixes minor issues with right chat container.
-		//
-		//This will probably be changed.
 		var updateContainer = function() {
 			$("#chatContainer").height($(document).height() - $("#users").height() - parseInt($("#users").css("margin-top")) - $("#controls").height() - parseInt($("#controls").css("margin-top")) - $(".user").length -$("#chatText").height() - $("#chatText").height() - 4);
 			$("#chat").height($("#chatContainer").height() - $("#chatText").height());
 		};
 
-			$(window).resize(function() {
+		$(window).resize(function() {
 		    updateContainer();
 		});
 
 		updateContainer();
 
 
-	}
 
 
-
-
-	//Event when we are allowed to join the document.
-	private OnJoin(data : any) {
-
-		/*
-			data = {
-					
-					Users : [ {userdef}, {userdef}, etc...],
-					SuggestedLanguage : '',
-					Name : ""
-			}
-
-		*/
-
-
-//		//Populate users into session.
-//		for(var i = 0; i < data.Users.length; i++) {
-	//		this.Session.AddUser(CodeSoar.Common.User.FromJSON(data.Users[i]));
-	//	}
-
-	//	this.User = new CodeSoar.Common.User (this.m_socket);
-	//	this.User.Name = data.Name;
-//
-		//TODO: Get a better number for this stack!
-	//	this.m_editStack = new CodeSoar.Common.CircularStack<CodeSoar.Client.Edit>(100);
-
-	}
-
-
-	//Event when a new user joins the document.
-	private OnSocketJoined(data : any) {
-
-	//	this.Session.AddUser(CodeSoar.Common.User.FromJSON(data));
-
-	}
-
-
-	//Event when a user leaves the document.
-	private OnSocketLeft(data : any) {
-
-		//remove user from session list.
-	//	this.Session.RemoveUser(CodeSoar.Common.User.FromJSON(data));
-
-
-		//TODO: remove users selections/activeline/cursor
-
-	}
-
-
-	//Event when another user manipulates thier cursor.
-	private OnSocketCursorChange(data : any) {
-
-		/*
-			data = {
-				
-			}
-		*/
-
-	}
-
-
-	//Event when another user changes their selection.
-	private OnSocketSelectionChange(data : any) {
-
-
-
-	}
-
-
-	//Event when another user sends a chat message.
-	private OnSocketMessage(data : any) {
-
-		/*
-	
-			
-
-
-		*/
-
-	}
-
-	//Event when another user changes to a language other than
-	//what THIS user has the editor set to.
-	private OnSocketLanguageChange (data: any) {
-
-
-	}
-
-
-	//Event thrown when another user changes the document.
-	private OnSocketEdit(data : any) {
-
+		//This starts the session.
+		//
+		//request to join document room, using name provided by user.
+		this.Socket.emit('join', { docID: this.Session.DocID, name: $("#nickInput").val() });
 
 	}
 
 
 
-	//Handler for when the editor notifies us of a change to the document.
-	private OnEdit(data: any) {
-
-/*
-		if (this.m_syncMode) {
-
-			//edits during sync mode go in the buffer for review during sync finalization.			
-
-			return;
-		}
-*/
-	//	//add timestamp
-		//data.data.ts = CodeSoar.Common.Util.GetTimestamp();
-
-		//create new edit object.
-	//	var edit : CodeSoar.Client.Edit = new CodeSoar.Client.Edit(this.EditorDocument, data.data,
-	//															   CodeSoar.Common.Util.GetTimestamp());
-
-		/*
-		//check to see if newer edits already were pushed
-		var isNotNewestEdit = this.m_editStack.Contains(edit, function(a : Edit, b : Edit) {
-			return a.Timestamp < b.Timestamp;
-		}));
 
 
-		if (isNotNewestEdit) {
-
-			console.log("Edit failed newest test, need to sync?");
-
-			//Put editor into 'sync mode' [SetReadOnly, new edits from socket go to sorted queue]
-			//this.m_syncMode = true;
-			//this.Editor.setReadOnly(true);
-
-			//Set an 'ace Anchor' at the beginning and end of each edit after
-			//this new one. So if there are new lines, extra text that moves things, etc,
-			//we will have a good chance of retaining all edits as valid. [as long as they don't delete the whole doc]
-
-
-
-		}
-
-		//push edit to edit stack.
-		this.m_editStack.Push(edit);
-
-		*/
-
-	}
-
-
-	//handler for redo's [they don' fire the 'change' event]
-	private OnRedo (data : any) {
-		//data.data.ignore = true;
-		this.OnEdit(data);
-	}
-
-	//handler for undo's [they don't fire the 'change' event]
-	private OnUndo (data : any) {
-	//	data.data.ignore = true;
-		this.OnEdit(data);
-	}
-
-	//handler for Vertical scrolling events
-	private OnVerticalScroll(scrollTop : number) {
-
-
-	}
-
-
-	//handler for Horizontal scrolling events
-	private OnHorizontalScroll(scrollLeft : number) {
-
-
-	}
-
-
-	//handler for cursor change events
-	private OnCursorChange() {
-
-		//get cursor position
-		var cursorPos : any = this.EditorSession.getCursor();
-
-		//cursorPos = { row: ##, column: ##};
-
-	}
-
-
-	private OnSelectionChange() {
-
-		var selection : any = this.EditorSession.selection;
-
-
-
-		if (selection.inMultiSelectMode) {
-			//check if we have multiple selection ranges
-
-			//loop through the selection.ranges array.
-
-
-
-			//selectionRange object def
-			//
-			/*
-
-				[0] : {
-					cursor: {
-						column: 19,
-						row: 3
-					},
-					end: {
-						column: 3,
-						row: 5
-					},
-					start: {
-						column: 19,
-						row: 3
-					}
-				},
-				[1] ....
-
-
-			*/
-
-			//Send off multi selection message
-
-			return;
-		}
-
-		//Not in multi select
-
-		var startPos = { column: selection.anchor.column, row: selection.anchor.row};
-		var endPos = { column : selection.lead.column, row: selection.lead.row};
-
-		//send of new selection message.
-
-	}
-
-
-
-
+	public Renderer : CodeSoar.Client.View.Renderer;
 	public Session : CodeSoar.Common.CodeSoarSession;
 	public ExeClient : CodeSoar.Common.IExeClient;
 	public User : CodeSoar.Common.User;
@@ -484,16 +437,11 @@ export class EditorController {
 	public EditorSession : any;
 	public EditorDocument : any;
 
+	public UserID : number;
+	public UserName : string;
+
 	private m_syncMode : boolean = false;
 	private m_lastEdit : any = null;
-//	private m_recentEdits : CodeSoar.Common.CircularStack<CodeSoar.Client.Edit>;
-//	private m_editBuffer : CodeSoar.Common.CircularStack<CodeSoar.Client.Edit>;
-	private m_socket : any;
-	private m_cursor : CodeSoar.Client.View.Cursor = new CodeSoar.Client.View.Cursor();
-	private m_selection : CodeSoar.Client.View.Selection = new CodeSoar.Client.View.Selection();
-	//private m_cursors : CodeSoar.Client.View.ViewCollection<CodeSoar.Client.View.Cursor>;
-	private m_selections : CodeSoar.Client.View.ViewCollection<CodeSoar.Client.View.Selection>;
-	private m_activelines : CodeSoar.Client.View.ViewCollection<CodeSoar.Client.View.ActiveLine>;
-
+	public Socket : any;
 }
 }

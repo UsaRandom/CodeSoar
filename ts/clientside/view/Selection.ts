@@ -23,13 +23,16 @@ export class Selection implements CodeSoar.Client.View.IView {
 
 
 	public Update(data? : any) : void {
-			
+
 		
 		if (typeof data != 'undefined') {
-			this.startRow = data.s.r;
-			this.startCol = data.s.c;
-			this.endRow = data.e.r;
-			this.endCol = data.e.c;
+
+
+			this.m_data = data;
+			this.startRow = data.s[0].s.r;
+			this.startCol = data.s[0].s.c;
+			this.endRow = data.s[0].e.r;
+			this.endCol = data.s[0].e.c;
 		}
 
 		this.Paint();
@@ -38,12 +41,20 @@ export class Selection implements CodeSoar.Client.View.IView {
 
 	private Paint() : void {
 
+		for(var i = 0; i < this.m_data.s.length; i++) {
+
+
+		}
+
 		var startPos = this.Editor.getSession().documentToScreenPosition(this.startRow, this.startCol);
 		var endPos = this.Editor.getSession().documentToScreenPosition(this.endRow, this.endCol);
 
 
 		//check if selecting more than one line...
 		if (startPos.row != endPos.row) {
+			
+
+			
 
 		} else {
 			//only one line selected...
@@ -54,7 +65,7 @@ export class Selection implements CodeSoar.Client.View.IView {
 			}
 
 			if ($("#"+this.m_id+"_single").length == 0) {
-				$("#editor .ace_marker-layer:first").append('<div id="'+this.m_id+'_single"></div>');
+				$("#codesoar_marker-layer").append('<div id="'+this.m_id+'_single"></div>');
 			}
 
 
@@ -75,17 +86,23 @@ export class Selection implements CodeSoar.Client.View.IView {
 
 
 	public Remove() : void {
+		if($("#"+this.m_id+'_single').length == 0) {
+			$("#"+this.m_id+'_single').remove();
+		}
 
+		//have logic for top/bottom removes
 	}
 
 
 
 	private m_id : number;
 
-	private startRow : number;
-	private endRow : number;
-	private startCol : number;
-	private endCol : number;
+	private m_data : any;
+
+	private startRow : number = 0;
+	private endRow : number = 0;
+	private startCol : number = 0;
+	private endCol : number = 0;
 
 	static id : number = 0;
 	public Editor : any;
