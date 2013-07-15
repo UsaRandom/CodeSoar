@@ -280,9 +280,9 @@ var CodeSoar;
                     }
                 });
 
-                socket.emit('join', { uId: socket.uId, n: socket.User.Name });
+                socket.emit('join', { uId: socket.uId, n: socket.User.Name, u: otherUsers });
 
-                socket.broadcast.to(this.DocID).emit("user-joined", { uId: socket.uId, n: socket.User.Name, u: otherUsers });
+                socket.broadcast.to(this.DocID).emit("user-joined", { uId: socket.uId, n: socket.User.Name });
             };
 
             MessageRoom.prototype.GetUsers = function () {

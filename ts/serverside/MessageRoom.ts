@@ -135,9 +135,9 @@ export class MessageRoom {
 	    });
 
 	    //give socket its name and id
-    	socket.emit('join', {uId: socket.uId, n: socket.User.Name});
+    	socket.emit('join', {uId: socket.uId, n: socket.User.Name, u: otherUsers});
      	//tell everyone this user joined.
-    	socket.broadcast.to(this.DocID).emit("user-joined", {uId: socket.uId, n: socket.User.Name, u: otherUsers});
+    	socket.broadcast.to(this.DocID).emit("user-joined", {uId: socket.uId, n: socket.User.Name});
 
 
 	}
