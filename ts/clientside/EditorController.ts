@@ -273,7 +273,7 @@ export class EditorController {
 			self.Renderer.Render();
 		});
 		
-		this.EditorSession.on('changeCursor', function(data) {
+		this.EditorSession.selection.on('changeCursor', function(data) {
 		
 
 			//clone data object

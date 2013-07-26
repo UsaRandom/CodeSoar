@@ -93,13 +93,13 @@ var CodeSoar;
                 };
 
                 Cursor.prototype.Paint = function () {
-                    if ($("#" + this.m_id).length == 0) {
+                    if ($("#" + this.m_id + "_cursor").length == 0) {
                         $("#codesoar_cursor-layer").append('<div id="' + this.m_id + '"></div>');
                     }
 
                     var docPos = this.Editor.getSession().documentToScreenPosition(this.row, this.col);
 
-                    $("#" + this.m_id).css({
+                    $("#" + this.m_id + "_cursor").css({
                         'height': '15px',
                         'top': 15 * (docPos.row) + 'px',
                         'left': 4 + (6 * docPos.column) + 'px',
@@ -151,9 +151,6 @@ var CodeSoar;
                 };
 
                 Selection.prototype.Paint = function () {
-                    for (var i = 0; i < this.m_data.s.length; i++) {
-                    }
-
                     var startPos = this.Editor.getSession().documentToScreenPosition(this.startRow, this.startCol);
                     var endPos = this.Editor.getSession().documentToScreenPosition(this.endRow, this.endCol);
 
@@ -997,7 +994,7 @@ var CodeSoar;
                     self.Renderer.Render();
                 });
 
-                this.EditorSession.on('changeCursor', function (data) {
+                this.EditorSession.selection.on('changeCursor', function (data) {
                     var dataClone = clone(self.Editor.getCursorPosition());
 
                     var msg = new CodeSoar.Common.Messages.CursorMessage(dataClone);

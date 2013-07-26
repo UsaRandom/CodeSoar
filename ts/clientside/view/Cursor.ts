@@ -38,7 +38,7 @@ export class Cursor implements CodeSoar.Client.View.IView {
 	private Paint() : void {
 
 		//if cursor div doesn't exists
-		if ($("#"+this.m_id).length == 0) {
+		if ($("#"+this.m_id+"_cursor").length == 0) {
 
 			$("#codesoar_cursor-layer").append('<div id="'+this.m_id+'"></div>');
 			
@@ -50,7 +50,7 @@ export class Cursor implements CodeSoar.Client.View.IView {
 		var docPos = this.Editor.getSession().documentToScreenPosition(this.row, this.col);
 
 
-		$("#"+this.m_id).css({
+		$("#"+this.m_id+"_cursor").css({
 			'height': '15px',
 			'top': 15 * (docPos.row) + 'px',
 			'left': 4 + (6 * docPos.column) + 'px',

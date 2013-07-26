@@ -41,10 +41,10 @@ export class Selection implements CodeSoar.Client.View.IView {
 
 	private Paint() : void {
 
-		for(var i = 0; i < this.m_data.s.length; i++) {
+	//	for(var i = 0; i < this.m_data.s.length; i++) {
 
 
-		}
+	//	}
 
 		var startPos = this.Editor.getSession().documentToScreenPosition(this.startRow, this.startCol);
 		var endPos = this.Editor.getSession().documentToScreenPosition(this.endRow, this.endCol);
