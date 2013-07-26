@@ -185,6 +185,16 @@ app.get('/view/:document', function(req, res) {
 	*/
 });
 
+var fs = require('fs');
+
+app.get('/danger/:doc', function(req, res) {
+
+    fs.readFile(__dirname + '/public/danger/'+req.params.doc, 'utf8', function(err, text){
+        res.send(text);
+    });
+
+});
+
 
 //request to create a document
 app.post("/create", function(req, res) {
