@@ -45,7 +45,7 @@ export class MessageRoom {
 			
 			for(var i = 0; i < socketClients.length; i++) {
 				if (socketClients[i].uId != socket.uId) {
-					if (socketClients[i].User.Name.toLowerCase() == nameToUse.toLowerCase()) {
+					if (socketClients[i].User != null && socketClients[i].User.Name.toLowerCase() == nameToUse.toLowerCase()) {
 						nameTaken = true;
 					}
 					otherUsers.length = otherUsers.length + 1;
@@ -59,7 +59,7 @@ export class MessageRoom {
 				var nameTemp : string = nameToUse+nameAddition;
 				for(var i = 0; i < socketClients.length; i++) {
 					if (socketClients[i].uId != socket.uId &&
-						socketClients[i].User.Name.toLowerCase() == nameTemp.toLowerCase()) {
+						socketClients[i].User != null && socketClients[i].User.Name.toLowerCase() == nameTemp.toLowerCase()) {
 						nameTaken = true;
 					}
 				}
