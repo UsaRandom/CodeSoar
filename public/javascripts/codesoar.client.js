@@ -154,10 +154,78 @@ var CodeSoar;
                 };
 
                 Selection.prototype.Paint = function () {
+                    this.Remove();
+
                     var startPos = this.Editor.getSession().documentToScreenPosition(this.startRow, this.startCol);
                     var endPos = this.Editor.getSession().documentToScreenPosition(this.endRow, this.endCol);
 
                     if (startPos.row != endPos.row) {
+                        var rowCnt = Math.abs(startPos.row - endPos.row);
+
+                        $("#codesoar_marker-layer").append('<div id="' + this.m_id + '_top"></div>');
+
+                        if (rowCnt >= 2)
+                            $("#codesoar_marker-layer").append('<div id="' + this.m_id + '_mid"></div>');
+
+                        $("#codesoar_marker-layer").append('<div id="' + this.m_id + '_bot"></div>');
+
+                        var flipped = true;
+                        if (startPos.row < endPos.row)
+                            flipped = false;
+
+                        if (!flipped) {
+                            $("#" + this.m_id + '_top').css({
+                                'height': '15px',
+                                'top': 15 * (startPos.row) + 'px',
+                                'left': 4 + (6 * startPos.column) + 'px',
+                                'right': '0',
+                                'z-index': 5,
+                                'position': 'absolute',
+                                'background': 'rgb(241, 199, 179)'
+                            });
+
+                            $("#" + this.m_id + '_bot').css({
+                                'height': '15px',
+                                'top': 15 * (endPos.row) + 'px',
+                                'left': '4px',
+                                'width': 6 * endPos.column + 'px',
+                                'z-index': 5,
+                                'position': 'absolute',
+                                'background': 'rgb(241, 199, 179)'
+                            });
+                        } else {
+                            $("#" + this.m_id + '_bot').css({
+                                'height': '15px',
+                                'top': 15 * (startPos.row) + 'px',
+                                'left': '4px',
+                                'width': 6 * startPos.column + 'px',
+                                'z-index': 5,
+                                'position': 'absolute',
+                                'background': 'rgb(241, 199, 179)'
+                            });
+
+                            $("#" + this.m_id + '_top').css({
+                                'height': '15px',
+                                'top': 15 * (endPos.row) + 'px',
+                                'left': 4 + (6 * endPos.column) + 'px',
+                                'right': '0',
+                                'z-index': 5,
+                                'position': 'absolute',
+                                'background': 'rgb(241, 199, 179)'
+                            });
+                        }
+
+                        if (rowCnt >= 2) {
+                            $("#" + this.m_id + '_mid').css({
+                                'height': 15 * (rowCnt - 1) + 'px',
+                                'top': 15 * (Math.min(startPos.row, endPos.row) + 1) + 'px',
+                                'left': '4px',
+                                'right': '0',
+                                'z-index': 5,
+                                'position': 'absolute',
+                                'background': 'rgb(241, 199, 179)'
+                            });
+                        }
                     } else {
                         if (startPos.column == endPos.column) {
                             return;
@@ -180,8 +248,20 @@ var CodeSoar;
                 };
 
                 Selection.prototype.Remove = function () {
-                    if ($("#" + this.m_id + '_single').length == 0) {
+                    if ($("#" + this.m_id + '_single').length != 0) {
                         $("#" + this.m_id + '_single').remove();
+                    }
+
+                    if ($("#" + this.m_id + '_top').length != 0) {
+                        $("#" + this.m_id + '_top').remove();
+                    }
+
+                    if ($("#" + this.m_id + '_mid').length != 0) {
+                        $("#" + this.m_id + '_mid').remove();
+                    }
+
+                    if ($("#" + this.m_id + '_bot').length != 0) {
+                        $("#" + this.m_id + '_bot').remove();
                     }
                 };
 
