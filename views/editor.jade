@@ -2,12 +2,18 @@ extends pagelayout
 
 block css
 	link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
-	link(rel='stylesheet', href='/stylesheets/codesoar.editor.css')
+	if language != "html"
+		link(rel='stylesheet', href='/stylesheets/codesoar.editor.css')
+	else
+		link(rel='stylesheet', href='/stylesheets/codesoar.editor.html.css')
 
 block append scripts
 	script(type='text/javascript', src='/javascripts/ace.js', charset='utf-8')
 	script(type='text/javascript', src='/socket.io/socket.io.js', charset='utf-8')
 	script(type='text/javascript', src='/javascripts/codesoar.client.js', charset='utf-8')
+	if language == "html"
+		script(type='text/javascript', src='/javascripts/splitter.js', charset='utf-8')
+	
 	script
 		$(document).ready(function () {
 			jQuery.fx.off = true;
@@ -27,8 +33,13 @@ block body
 			button.btn.btn-primary(data-dismiss='modal', aria-hidden='true') Set
 
 	//Editor
-	div#editor #{src}
-
+	if language != "html"
+		div#editor #{src}
+	else
+		div#splitter
+			div#editor
+			div#executor
+				iframe#eView
 	div#right-col
 		div#controls
 			button#executeBtn.btn.btn-mini.btn-primary.disabled(type='button')

@@ -30,6 +30,8 @@ var CodeSoar;
                 this.ExeClients = Array(0);
                 this.EditNumber = 0;
                 this.DocID = docId;
+
+                this.LanguageName = languageName;
             }
             CodeSoarSession.prototype.ContainsUser = function (user) {
                 return this.IndexOfUser(user) != -1;
@@ -84,7 +86,8 @@ var CodeSoar;
                     this.m_id = CodeSoar.Client.View.Cursor.id++;
                 }
                 Cursor.prototype.Update = function (data) {
-                    if (typeof data != 'undefined') {
+                    if (typeof data != 'undefined' && typeof data.m_data != 'undefined') {
+                        data = data.m_data;
                         this.row = data.r;
                         this.col = data.c;
                     }
@@ -94,7 +97,7 @@ var CodeSoar;
 
                 Cursor.prototype.Paint = function () {
                     if ($("#" + this.m_id + "_cursor").length == 0) {
-                        $("#codesoar_cursor-layer").append('<div id="' + this.m_id + '"></div>');
+                        $("#codesoar_cursor-layer").append('<div id="' + this.m_id + '_cursor"></div>');
                     }
 
                     var docPos = this.Editor.getSession().documentToScreenPosition(this.row, this.col);
@@ -114,7 +117,7 @@ var CodeSoar;
                 };
 
                 Cursor.prototype.Remove = function () {
-                    $("#" + this.m_id).remove();
+                    $("#" + this.m_id + '_cursor').remove();
                 };
 
                 Cursor.id = 0;
@@ -877,7 +880,7 @@ var CodeSoar;
                             var usr = new CodeSoar.Common.User();
 
                             usr.uId = data.u[i].uId;
-                            usr.Name = data.u[i].Name;
+                            usr.Name = data.u[i].n;
                             if (data.u[i].s)
                                 usr.Selection = data.u[i].s;
                             if (data.u[i].c)
@@ -1073,6 +1076,31 @@ var CodeSoar;
                         self.Editor.setTheme("");
                     }
                 });
+
+                switch (this.Session.LanguageName) {
+                    case "javascript": {
+                        $("#executeBtn").click(function () {
+                            try  {
+                                eval(self.Editor.getSession().getValue());
+                            } catch (er) {
+                            }
+                        });
+
+                        $("#executeBtn").removeClass("disabled");
+                        break;
+                    }
+                    case "html": {
+                        $("#executeBtn").click(function () {
+                            try  {
+                            } catch (err) {
+                            }
+                        });
+                        $("#executeBtn").removeClass("disabled");
+                    }
+                    default: {
+                        break;
+                    }
+                }
 
                 var updateContainer = function () {
                     $("#chatContainer").height($(document).height() - $("#users").height() - parseInt($("#users").css("margin-top")) - $("#controls").height() - parseInt($("#controls").css("margin-top")) - $(".user").length - $("#chatText").height() - $("#chatText").height() - 4);

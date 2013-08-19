@@ -23,6 +23,8 @@ export class CodeSoarSession {
 	constructor (docId : string, languageName : string) {
 
 		this.DocID = docId;
+
+		this.LanguageName = languageName;
 	}
 
 

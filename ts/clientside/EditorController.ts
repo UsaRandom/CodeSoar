@@ -85,7 +85,7 @@ export class EditorController {
 					var usr : CodeSoar.Common.User = new CodeSoar.Common.User();
 
 					usr.uId = data.u[i].uId;
-					usr.Name = data.u[i].Name;
+					usr.Name = data.u[i].n;
 					if (data.u[i].s)
 						usr.Selection = data.u[i].s;
 					if (data.u[i].c)
@@ -403,6 +403,45 @@ export class EditorController {
 				}
 		});
 
+		switch(this.Session.LanguageName)
+		{
+			case "javascript":
+			{
+				//setup javascript evaluation magic
+				$("#executeBtn").click(function() {
+					try
+					{
+						eval(self.Editor.getSession().getValue());
+					} catch (er)
+					{
+
+					}
+				});
+
+				$("#executeBtn").removeClass("disabled");
+				break;
+			}
+			case "html":
+			{
+				//setup splitter
+				
+				
+				$("#executeBtn").click(function(){
+					try
+					{
+
+					}catch (err)
+					{
+
+					}
+				});
+				$("#executeBtn").removeClass("disabled");
+			}
+			default:
+			{
+				break;
+			}
+		}
 
 		var updateContainer = function() {
 			$("#chatContainer").height($(document).height() - $("#users").height() - parseInt($("#users").css("margin-top")) - $("#controls").height() - parseInt($("#controls").css("margin-top")) - $(".user").length -$("#chatText").height() - $("#chatText").height() - 4);

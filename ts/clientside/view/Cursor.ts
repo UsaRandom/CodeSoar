@@ -25,9 +25,11 @@ export class Cursor implements CodeSoar.Client.View.IView {
 
 	public Update(data? : any) : void {
 
-		if (typeof data != 'undefined') {
+		if (typeof data != 'undefined' && typeof data.m_data != 'undefined') {
+			data = data.m_data;
 			this.row = data.r;
-			this.col = data.c;
+			this.col = data.c;	
+		
 		}
 
 		this.Paint();
@@ -40,7 +42,7 @@ export class Cursor implements CodeSoar.Client.View.IView {
 		//if cursor div doesn't exists
 		if ($("#"+this.m_id+"_cursor").length == 0) {
 
-			$("#codesoar_cursor-layer").append('<div id="'+this.m_id+'"></div>');
+			$("#codesoar_cursor-layer").append('<div id="'+this.m_id+'_cursor"></div>');
 			
 		}
 
@@ -68,7 +70,7 @@ export class Cursor implements CodeSoar.Client.View.IView {
 
 	public Remove() : void {
 		//go away
-		$("#"+this.m_id).remove();
+		$("#"+this.m_id+'_cursor').remove();
 	}
 
 	private m_id : number;

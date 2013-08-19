@@ -11,7 +11,7 @@
 			"file": "app.js",
 			"settings":
 			{
-				"buffer_size": 12323,
+				"buffer_size": 18269,
 				"line_ending": "Windows"
 			}
 		},
@@ -158,15 +158,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 12323,
+						"buffer_size": 18269,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								787,
-								787
+								0,
+								0
 							]
 						],
 						"settings":
@@ -256,7 +256,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 357.0,
+						"translation.y": 477.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -327,7 +327,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 663.0,
+						"translation.y": 630.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -426,7 +426,7 @@
 		]
 	},
 	"show_minimap": true,
-	"show_open_files": false,
+	"show_open_files": true,
 	"show_tabs": true,
 	"side_bar_visible": true,
 	"side_bar_width": 212.0,

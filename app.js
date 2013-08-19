@@ -15,7 +15,7 @@ var CodeSoar;
                 this.NODEJS_IP = nodeIP;
             }
             Config.Get = function () {
-                return CodeSoar.Server.Config._PROD;
+                return CodeSoar.Server.Config._DEV;
             };
 
             Config._DEV = new Config("http://localhost", "dev", "pass", "localhost", 27017, "codesoar", 80, '127.0.0.1', 8000, '127.0.0.1');

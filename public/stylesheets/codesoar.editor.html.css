@@ -1,0 +1,143 @@
+ul
+{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+li
+{
+  margin: 0;
+  padding: 5px;
+}
+
+h5
+{
+  margin: 0;
+  padding: 0;
+
+}
+
+#splitter
+{
+    position: absolute;
+  top: 0px;
+  bottom:0;
+  right: 230px;
+  left:0;
+  height: 300px;
+  widows: 700px;
+}
+
+#editor
+{
+  overflow: auto;
+  visibility: hidden;
+  width: 100%;
+}
+#executor
+{
+  overflow: auto;
+  width: 100%;
+}
+
+.hsplitbar {
+  height: 6px;
+  background: #fbfbfb;
+}
+
+#right-col
+{ 
+  width: 230px;
+  background: #fbfbfb;
+  position: absolute;
+  top: 0px;
+  bottom:0;
+  right: 0;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+#controls
+{
+
+  margin-top: 10px;
+  margin-left: 10px;
+}
+#users
+{
+  margin-top: 10px;
+
+}
+#chat
+{
+  background-color: #ffffff;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  position: absolute;
+  right: 0;
+  left: 0;
+
+}
+
+.msg
+{
+  margin: 0;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  font-size: 12px;
+}
+
+.msg strong
+{
+  color: #60B1DA;
+}
+
+#chatHeader
+{
+  max-height: 41px;
+  min-height: 41px;
+  border-bottom: 1px solid #CCCCCC;
+}
+
+#chatHeader h5
+{
+  padding-top: 17px;
+  padding-left: 8px;
+}
+
+
+.user
+{
+  width:205px;
+  height: 20px;
+  background-color: #EFEFEF;
+  font-weight: bold;
+  margin-bottom: 1px;
+}
+
+.user:hover
+{
+  background-color: #FFFFFF;
+}
+
+.you
+{
+  background-color: #0088cc;
+  color: #ffffff;
+}
+.you:hover
+{
+  color: #000000;
+}
+
+#chatText
+{
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  width: 98%;
+  bottom: 0;
+  font-size: 12px;
+}
+
