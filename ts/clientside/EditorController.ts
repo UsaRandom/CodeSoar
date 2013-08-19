@@ -180,6 +180,7 @@ export class EditorController {
 
 		this.Socket.on('user-message', function(data) {
 			
+			console.log(data);
 			//fetch actual user's name	
 			var usr : CodeSoar.Common.User = self.Renderer.Users.Get(function(a : CodeSoar.Common.User) {
 				if (typeof a == 'undefined' || a == null) {
@@ -191,7 +192,7 @@ export class EditorController {
 				return false;
 			});
 
-			$("#chatMsgs").append('<li class="msg"><strong>'+usr.Name+': </strong>'+data+'</li>');
+			$("#chatMsgs").append('<li class="msg"><strong>'+data.n+': </strong>'+data.m+'</li>');
 
 		});
 
@@ -372,7 +373,7 @@ export class EditorController {
 		$("#chatText").bind('keypress', function (e) {
 		    if ((e.keyCode || e.which) == 13) {
 				if ($("#chatText").val() != '') {
-		        	self.Socket.emit('message', $("#chatText").val());
+		        	self.Socket.emit('message', {n: self.UserName ,m:$("#chatText").val()});
 					$("#chatMsgs").append('<li class="msg"><strong>'+self.UserName+': </strong>'+$("#chatText").val()+'</li>');
 		      	
 		        	$("#chatText").val('');

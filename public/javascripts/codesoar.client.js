@@ -944,6 +944,8 @@ var CodeSoar;
                 });
 
                 this.Socket.on('user-message', function (data) {
+                    console.log(data);
+
                     var usr = self.Renderer.Users.Get(function (a) {
                         if (typeof a == 'undefined' || a == null) {
                             return false;
@@ -954,7 +956,7 @@ var CodeSoar;
                         return false;
                     });
 
-                    $("#chatMsgs").append('<li class="msg"><strong>' + usr.Name + ': </strong>' + data + '</li>');
+                    $("#chatMsgs").append('<li class="msg"><strong>' + data.n + ': </strong>' + data.m + '</li>');
                 });
 
                 this.Socket.on('user-edit', function (data) {
@@ -1053,7 +1055,7 @@ var CodeSoar;
                 $("#chatText").bind('keypress', function (e) {
                     if ((e.keyCode || e.which) == 13) {
                         if ($("#chatText").val() != '') {
-                            self.Socket.emit('message', $("#chatText").val());
+                            self.Socket.emit('message', { n: self.UserName, m: $("#chatText").val() });
                             $("#chatMsgs").append('<li class="msg"><strong>' + self.UserName + ': </strong>' + $("#chatText").val() + '</li>');
 
                             $("#chatText").val('');
