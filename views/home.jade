@@ -8,25 +8,14 @@ block append scripts
 
 block content
 	h1.text-center Co-Op Code in Real-Time
-	h2.text-center
-		span(style="color:#FF0000;") WARNING:
-		|  CodeSoar.com is undergoing a revamp. Whether they break the entire
-		| application or not updates are being pushed as they need testing. Since my analytics
-		| show that not that many people are using this site right now, I'm not too bothered by having 
-		| the site not work for a week or so.
-	h2.text-center -
-	h2.text-center
-		strong(style="color:#0000FF;") QUERY:
-		|  So, during this time of chaos I have one question for you and one question 
-		| alone...
-	h2.text-center -
-	h2.text-center
-		strong(style="color:#FF0000;") EXPLOSIONS?!?!?!??
-	img.text-center(src="/images/explosion.jpg")
-	h2.text-center -
 	p.text-center
-		| Copy and Paste some code, select the language and press go!
-		| Share the link and collaborate with friends!
+		strong Copy and Paste 
+		| some code, 
+		strong Select the Language
+		|  and 
+		strong press go! 
+		strong Share the link
+		|  and collaborate with friends!
 	div#editor_demo
 		| 
 		| function add(x, y) {
@@ -134,5 +123,12 @@ block content
 		div.span2
 			button#go_btn.btn.btn-large.btn-primary(type='button') GO
 		div.span2
+	h3.text-center
+		em
+			span(style="color:#FF0000;") WARNING: 
+			| CodeSoar is in the middle of a revamp, so things are very broken.
+			| Use at your own risk.
+		br
+		em [EDITS ARE NOT SAVED]
 block end
 	script(type='text/javascript', src='/javascripts/codesoar.home.js', charset='utf-8')
