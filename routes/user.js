@@ -1,8 +1,17 @@
+$(document).ready(function() {
+    
+	//The read-more/read-less functionality
 
-/*
- * GET users listing.
- */
+    $("#read-more").on('click', function() {
+    	$(this).hide();
 
-exports.list = function(req, res){
-  res.send("respond with a resource");
-};
+    	$("#more-info").show();
+    });
+
+
+    $("#read-less").on('click', function() {
+    	$("#more-info").hide();
+    	$("#read-more").show();
+    })
+
+});
